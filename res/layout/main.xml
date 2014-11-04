@@ -1,0 +1,77 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0781C4"
+    tools:context="${packageName}.${activityClass}" >
+
+    <RelativeLayout
+        android:id="@+id/rel_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp" >
+
+        <TextView
+            android:id="@+id/tv_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="25dp"
+            android:text="WyS"
+            android:textColor="#FFFFFF"
+            android:textSize="70sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+   
+
+    <RelativeLayout
+        android:id="@+id/rel_signInButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp" >
+
+        
+        <Button
+            android:id="@+id/btn_sign_up"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#98C571"
+            android:onClick="signMeUp"
+            android:paddingBottom="6dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="6dp"
+            android:text="Sign Up"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" 
+            android:textStyle="bold"/>
+        
+        <Button
+            android:id="@+id/btn_signin"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btn_sign_up"
+            android:background="#7DB7E2"
+            android:layout_marginTop="10dp"
+            android:paddingBottom="6dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="6dp"
+            android:text="Sign in"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+        
+    </RelativeLayout>
+    <!-- #810102 -->
+
+
+    
+
+</RelativeLayout>

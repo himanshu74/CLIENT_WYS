@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="100dp"
+    android:background="@drawable/signup_dialog_shape" >
+
+    <RelativeLayout
+        android:id="@+id/rel_bg_image"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#35C1DC"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="6dp" >
+
+        <TextView
+            android:id="@+id/tv_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please verify your account"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_step2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="step-2 of 2"
+            android:textColor="#FFFFFF"
+            android:textStyle="italic" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_code"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rel_bg_image"
+        android:layout_marginTop="40dp" >
+
+        <EditText
+            android:id="@+id/et_code"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/apptheme_edit_text_holo_light"
+            android:hint="Verification code"
+            android:maxLength="4"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_verify"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rel_code"
+        android:layout_marginTop="40dp" >
+
+        <Button
+            android:id="@+id/btn_verify"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/blue_theme_button_selector"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Verify"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btn_resend"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/blue_theme_button_selector"
+            android:paddingLeft="10dp"
+            android:text="Resend Code"
+            android:textColor="#FFFFFF" />
+    </RelativeLayout>
+
+</RelativeLayout>

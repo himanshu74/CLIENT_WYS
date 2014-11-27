@@ -8,16 +8,11 @@ import wys.Business.UserBo;
 import wys.CustomInterfaces.OnCheckUserListener;
 import wys.CustomInterfaces.OnSignUpListener;
 import wys.Helpers.PreferenceHelper;
-import wys.Http.*;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.sax.StartElementListener;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -31,7 +26,7 @@ public class SignUpDialog extends Dialog implements
 	private EditText et_username, et_password, et_email, et_confirm;
 	private static final int USER_ROLEID = 1;
 
-	public SignUpDialog(Context context, PreferenceHelper preferenceHelper) {
+	public SignUpDialog(Context context) {
 		super(context);
 		this._ctx = context;
 
@@ -44,12 +39,12 @@ public class SignUpDialog extends Dialog implements
 		getWindow().setBackgroundDrawable(
 				new ColorDrawable(android.graphics.Color.TRANSPARENT));
 		setContentView(R.layout.signup);
-		InitControls();
+		initControls();
 	}
 
-	private void InitControls() {
+	private void initControls() {
 		btn_signup = (Button) findViewById(R.id.btn_signup);
-	btn_signup.setOnClickListener(this);
+		btn_signup.setOnClickListener(this);
 		et_username = (EditText) findViewById(R.id.et_username);
 
 		et_password = (EditText) findViewById(R.id.et_password);
@@ -61,11 +56,11 @@ public class SignUpDialog extends Dialog implements
 	@Override
 	public void onClick(View v) {
 
-		ValidateAndSignUpUser();
+		validateAndSignUpUser();
 
 	}
 
-	private void OpenVerificationScreen() {
+	private void openVerificationScreen() {
 
 		SignUpDialog.this.dismiss();
 
@@ -75,21 +70,21 @@ public class SignUpDialog extends Dialog implements
 
 	}
 
-	private void ValidateAndSignUpUser() {
+	private void validateAndSignUpUser() {
 
 		String username = et_username.getText().toString();
 		String password = et_password.getText().toString();
 		String email = et_email.getText().toString();
 		String confirm = et_confirm.getText().toString();
 
-		if (ValidateFields(username, password, email, confirm)) {
-			ValidateUsernameAvail(username);
+		if (validateFields(username, password, email, confirm)) {
+			validateUsernameAvail(username);
 
 		}
 
 	}
 
-	private boolean ValidateFields(String username, String pass, String email,
+	private boolean validateFields(String username, String pass, String email,
 			String confirmPass) {
 		if (username.isEmpty() && pass.isEmpty() && email.isEmpty()
 				&& confirmPass.isEmpty()) {
@@ -129,6 +124,10 @@ public class SignUpDialog extends Dialog implements
 				et_confirm.setError("Passwords dont match, please re enter");
 				return false;
 			}
+			if(pass.length()<8){
+				et_password.setError("Password must contain atleast 8 characters");
+				return false;
+			}
 
 		}
 
@@ -136,7 +135,7 @@ public class SignUpDialog extends Dialog implements
 
 	}
 
-	private void ValidateUsernameAvail(String username) {
+	private void validateUsernameAvail(String username) {
 		IAsyncTask asyncTask = new SignupTask(SignUpDialog.this, _ctx);
 
 		asyncTask.ExcecuteCheckUsername(username);
@@ -144,7 +143,7 @@ public class SignUpDialog extends Dialog implements
 		// return SignupTask.CheckUserAvail(username);
 	}
 
-	private void SaveUser(String username, String pass, String email) {
+	private void saveUser(String username, String pass, String email) {
 		UserBo user = new UserBo();
 		user.set_username(username);
 		user.set_password(pass);
@@ -155,30 +154,30 @@ public class SignUpDialog extends Dialog implements
 	}
 
 	@Override
-	public void OnUserAvail() {
+	public void onUserAvail() {
 
-		SaveUser(et_username.getText().toString(), et_password.getText()
+		saveUser(et_username.getText().toString(), et_password.getText()
 				.toString(), et_email.getText().toString());
 	}
 
 	@Override
-	public void OnUserNotAvail() {
+	public void onUserNotAvail() {
 
 		et_username.setError("Sorry, Username is not available");
 
 	}
 
 	@Override
-	public void OnSignUpSuccess() {
+	public void onSignUpSuccess() {
 
 		SignUpDialog.this.dismiss();
 
-		OpenVerificationScreen();
+		openVerificationScreen();
 
 	}
 
 	@Override
-	public void OnSignUpFail() {
+	public void onSignUpFail() {
 
 		SignUpDialog.this.dismiss();
 		Toast.makeText(_ctx, "Oops, Something went wrong, Try again",
@@ -186,7 +185,7 @@ public class SignUpDialog extends Dialog implements
 	}
 
 	@Override
-	public void OnUnsuccessfulOperation() {
+	public void onUnsuccessfulOperation() {
 
 		Toast.makeText(_ctx,
 				"Sorry, Something went wrong wiith the server, Try again",

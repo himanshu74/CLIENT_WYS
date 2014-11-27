@@ -63,6 +63,7 @@ public class CategoryHandler extends Jsonhandler {
 			throws JSONException, ParseException {
 		CategoryBo categoryBo = new CategoryBo();
 		categoryBo.set_categoryId(json.getInt("CategoryId"));
+		categoryBo.set_serverId(json.getInt("CategoryId"));
 		categoryBo
 				.set_dateAdded(ConvertJsonToDate(json.getString("DateAdded")));
 		categoryBo.set_categoryName(json.getString("CategoryName"));

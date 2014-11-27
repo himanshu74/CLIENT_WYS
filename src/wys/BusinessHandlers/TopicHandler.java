@@ -61,12 +61,15 @@ public class TopicHandler extends Jsonhandler {
 	private TopicBo getTopicBoFromJson(JSONObject json) throws JSONException,
 			ParseException {
 		TopicBo topicBo = new TopicBo();
-		topicBo.set_topicId(json.getInt("TopicId"));
+		topicBo.set_serverId(json.getInt("TopicId"));
 		topicBo.set_domainId(json.getInt("DomainId"));
 		topicBo.set_name(json.getString("Name"));
 		topicBo.set_userId(json.getInt("UserId"));
+		topicBo.set_conclusion(json.getString("Conclusion"));
+		topicBo.set_isActive(json.getInt("IsActive"));
+		topicBo.set_isServed(json.getInt("IsServed"));
 		topicBo.set_dateAdded(ConvertJsonToDate(json.getString("DateAdded")));
-		topicBo.set_beginDate(ConvertJsonToDate(json.getString("BeginDate")));
+		topicBo.set_beginDate(json.getString("BeginDate"));
 		topicBo.set_conclusion(json.getString("Conclusion"));
 
 		return topicBo;

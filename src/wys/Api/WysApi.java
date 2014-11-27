@@ -1,17 +1,11 @@
 package wys.Api;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
+
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -19,13 +13,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-import android.widget.Toast;
+import android.R.integer;
 import wys.Business.BaseBusiness;
 import wys.Business.CategoryBo;
 import wys.Business.TopicBo;
@@ -43,9 +35,10 @@ public class WysApi {
 	private static final int ERROR = 1;
 
 	private static final String HOST = "http://";
-	private static final String DOMAIN = "192.168.0.2/WYS/api/";
-	// private static final String DOMAIN = "129.107.146.22/WYS/api/";
-	// private static final String DOMAIN = "192.168.1.46/WYS/api/";
+	 private static final String DOMAIN = "192.168.0.5/WYS/api/";
+	// private static final String DOMAIN = "129.107.144.192/WYS/api/";
+	// private static final String DOMAIN = "10.226.50.83/WYS/api/";
+	//private static final String DOMAIN = "jangra.com.s10.dotnetpark.com/api/";
 
 	private IHttpApi mHttpApi;
 
@@ -58,6 +51,8 @@ public class WysApi {
 	public WysApi() {
 		this.mHttpApi = new HttpApi(mHttpClient);
 	}
+
+	// //////////// NETWORK OPERATIONS METHODS \\\\\\\\\\\\\\\
 
 	public static int PostSignUp(UserBo user) {
 		DefaultHttpClient client = new DefaultHttpClient();
@@ -125,35 +120,27 @@ public class WysApi {
 
 	// Time not Yet Provided
 	public int PostTopic(TopicBo topic) {
-		ArrayList<NameValuePair[]> list = new ArrayList<NameValuePair[]>();
+		int status = -1;
 
-		NameValuePair[] postBody = new NameValuePair[3];
-		postBody[0] = (new BasicNameValuePair("Name", topic.get_name()));
-		postBody[1] = (new BasicNameValuePair("DomainId",
-				Integer.toString(topic.get_domainId())));
-		postBody[2] = (new BasicNameValuePair("UserId", Integer.toString(topic
-				.get_userId())));
-		/*
-		 * postBody[3] = (new BasicNameValuePair("BeginDate", topic
-		 * .get_beginDate().toString()));
-		 */
-
-		// Yet to Provide topic start time
-
-		String url = GetUrl(UrlManager.FETCH_POST_TOPIC_URL);
-		String response = mHttpApi.DoHttpPost(url, postBody);
-		if (!response.equals(null) && response.equals("0")) {
-			return SUCCESS;
-
-		} else {
-			return ERROR;
-
+		JSONObject jsonTopic = new JSONObject();
+		try {
+			jsonTopic.put("Name", topic.get_name());
+			jsonTopic.put("DomainId", topic.get_domainId());
+			jsonTopic.put("UserId", topic.get_userId());
+			jsonTopic.put("BeginDateUnix", topic.get_bgeindateUnixUTC());
+			jsonTopic.put("KeyWord", topic.get_keyword());
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 
-	}
-
-	public void toJsonObject(UserBo user) {
-
+		String url = GetUrl(UrlManager.FETCH_POST_TOPIC_URL);
+		String response = mHttpApi.DoHttpPostJson(url, jsonTopic);
+		if (!response.equals(null) && !response.equals("-1")) {
+			status = Integer.parseInt(response);
+		} else
+			status = ERROR;
+		return status;
 	}
 
 	public int postUserCategories(UserBo user) {
@@ -162,16 +149,73 @@ public class WysApi {
 		JSONArray jsonArray = new JSONArray();
 		try {
 			jsonUser.put("UserId", user.get_userId());
-			for (int i = 0; i < user.getUserCategories().size(); i++) {
-				ArrayList<CategoryBo> cats = user.getUserCategories();
+			ArrayList<CategoryBo> cats = user.getUserCategories();
+			for (int i = 0; i < cats.size(); i++) {
+
 				JSONObject jsonCats = new JSONObject();
-				jsonCats.put("CategoryId", cats.get(i).get_categoryId());
-				jsonCats.put("CategoryId", cats.get(i).get_categoryId());
+				jsonCats.put("CategoryId", cats.get(i).get_serverId());
+				/* jsonCats.put("CategoryId", cats.get(i).get_categoryId()); */
 				jsonArray.put(jsonCats);
 			}
 			jsonUser.put("CategoryList", jsonArray);
 			String response = mHttpApi.DoHttpPostJson(
 					GetUrl(UrlManager.FETCH_POST_USER_CATS_URL), jsonUser);
+			if (!response.equals(null) && response.equals("0")) {
+				status = SUCCESS;
+			} else
+				status = ERROR;
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return status;
+	}
+
+	public int postUserTopics(UserBo user) {
+		int status = -1;
+		JSONObject jsonUser = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		try {
+			jsonUser.put("UserId", user.get_userId());
+			ArrayList<TopicBo> topics = user.getUserTopics();
+			for (int i = 0; i < topics.size(); i++) {
+
+				JSONObject jsonTopics = new JSONObject();
+				jsonTopics.put("TopicId", topics.get(i).get_serverId());
+				jsonArray.put(jsonTopics);
+			}
+			jsonUser.put("TopicsList", jsonArray);
+			String response = mHttpApi.DoHttpPostJson(
+					GetUrl(UrlManager.FETCH_POST_USER_CATS_URL), jsonUser);
+			if (!response.equals(null) && response.equals("0")) {
+				status = SUCCESS;
+			} else
+				status = ERROR;
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return status;
+	}
+
+	public int postUserDeletedCategories(UserBo user) {
+		int status = -1;
+		JSONObject jsonUser = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		try {
+			jsonUser.put("UserId", user.get_userId());
+			ArrayList<CategoryBo> cats = user.getUserCategories();
+			for (int i = 0; i < cats.size(); i++) {
+
+				JSONObject jsonCats = new JSONObject();
+				jsonCats.put("CategoryId", cats.get(i).get_categoryId());
+				/* jsonCats.put("CategoryId", cats.get(i).get_categoryId()); */
+				jsonArray.put(jsonCats);
+			}
+			jsonUser.put("CategoryList", jsonArray);
+			String response = mHttpApi.DoHttpPostJson(
+					GetUrl(UrlManager.FETCH_DELETE_USER_CAT_URL), jsonUser);
 			if (!response.equals(null) && response.equals("0")) {
 				status = SUCCESS;
 			} else
@@ -265,6 +309,17 @@ public class WysApi {
 
 	}
 
+	public ArrayList<TopicBo> getAllTopics() {
+		String path = String.format(UrlManager.FETCH_ALL_TOPICS_URL);
+		HttpGet get = mHttpApi.CreateHttpGet(GetUrl(path));
+		TopicHandler topicHandler = new TopicHandler();
+		@SuppressWarnings("unchecked")
+		ArrayList<TopicBo> topics = (ArrayList<TopicBo>) mHttpApi
+				.DoHttpRequestJson(get, topicHandler);
+
+		return topics;
+	}
+
 	public ArrayList<BaseBusiness> doResetPassword(String username) {
 		String path = String.format(UrlManager.FETCH_RESET_PASSWORD_URL,
 				username);
@@ -301,6 +356,16 @@ public class WysApi {
 				.DoHttpRequestJson(get, categoryHandler);
 
 		return cats;
+	}
+
+	public void doRegisterGcm(String registrationId) {
+		String path = String.format(UrlManager.FETCH_GCM_REGISTER_URL,
+				registrationId);
+		HttpGet get = mHttpApi.CreateHttpGet(GetUrl(path));
+		ObjectHandler objectHandler = new ObjectHandler();
+		ArrayList<BaseBusiness> bus = (ArrayList<BaseBusiness>) mHttpApi
+				.DoHttpRequestJson(get, objectHandler);
+
 	}
 
 }

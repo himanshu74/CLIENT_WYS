@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF" >
 
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </android.support.v4.view.ViewPager>
+
     <RelativeLayout
         android:id="@+id/rel_title_category"
         android:layout_width="fill_parent"

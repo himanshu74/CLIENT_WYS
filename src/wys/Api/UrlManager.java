@@ -15,5 +15,10 @@ public class UrlManager {
 	public static final String FETCH_GET_USER_CATS_URL="users/%d/categories";
 	public static final String FETCH_GET_USER_REMAIN_CATS_URL="users/%d/categories/remaining";
 	public static final String FETCH_POST_USER_CATS_URL="users/categories";
+	public static final String FETCH_GCM_REGISTER_URL="notification/%s";
+	public static final String FETCH_ALL_TOPICS_URL="topics";
+	public static final String FETCH_DELETE_USER_CAT_URL="users/categories/delete";
+	public static final String FETCH_USER_TOPICS_URL="users/%d/topics";
+	public static final String FETCH_POST_USER_Topics_URL="users/topics";
 	
 }

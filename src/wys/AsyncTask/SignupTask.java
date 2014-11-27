@@ -84,20 +84,20 @@ public class SignupTask extends BaseAsyncTaskManager {
 		protected void onPostExecute(Integer result) {
 
 			progressDialog.dismiss();
-			Toast.makeText(
-					_ctx,
-					"Email with verification code has been sent to your email address, PLease verify your account",
-					Toast.LENGTH_LONG).show();
+			
 			if (result == SUCCESS) {
-
+				Toast.makeText(
+						_ctx,
+						"Email with verification code has been sent to your email address, PLease verify your account",
+						Toast.LENGTH_LONG).show();
 				if (_onSignUpListener != null) {
-					_onSignUpListener.OnSignUpSuccess();
+					_onSignUpListener.onSignUpSuccess();
 				}
 
 			} else if (result == ERROR) {
 
 				if (_onSignUpListener != null) {
-					_onSignUpListener.OnSignUpFail();
+					_onSignUpListener.onSignUpFail();
 				}
 
 			}
@@ -131,11 +131,11 @@ public class SignupTask extends BaseAsyncTaskManager {
 
 			if (result == AVAIL) {
 				if (_oncheCheckUserListener != null)
-					_oncheCheckUserListener.OnUserAvail();
+					_oncheCheckUserListener.onUserAvail();
 
 			} else if (result == NOT_AVAIL) {
 				if (_oncheCheckUserListener != null)
-					_oncheCheckUserListener.OnUserNotAvail();
+					_oncheCheckUserListener.onUserNotAvail();
 
 			} else {
 

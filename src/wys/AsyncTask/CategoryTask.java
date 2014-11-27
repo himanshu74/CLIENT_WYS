@@ -11,9 +11,13 @@ import wys.Business.UserBo;
 import wys.CustomInterfaces.OnGetCategoriesListener;
 import wys.CustomInterfaces.OnGetRemainCatListener;
 import wys.CustomInterfaces.OnGetUserCategoryListener;
+import wys.DatabaseHelpers.DBAdapter;
+import wys.Helpers.CategoryHelper;
+import wys.Modals.CategoryModal;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class CategoryTask extends BaseAsyncTaskManager {
 
@@ -21,6 +25,8 @@ public class CategoryTask extends BaseAsyncTaskManager {
 	private Context _ctx;
 	private ProgressDialog progressDialog;
 	private OnGetUserCategoryListener onGetUserCategoryListener;
+	private DBAdapter dbAdapter;
+
 	public OnGetUserCategoryListener getOnGetUserCategoryListener() {
 		return onGetUserCategoryListener;
 	}
@@ -42,28 +48,27 @@ public class CategoryTask extends BaseAsyncTaskManager {
 	private OnGetRemainCatListener onGetRemainCatListener;
 
 	public CategoryTask(OnGetCategoriesListener oncCategoriesListener,
-			Context context) {
+			Context context, DBAdapter dbAdapter) {
 		this._onCategoriesListener = oncCategoriesListener;
 		this._ctx = context;
+		this.dbAdapter = dbAdapter;
 	}
 
 	public void ExecuteGetCategories() {
 		new CategoryAsync().execute();
 	}
 
-	public void executeGetUsercats(){
-		UserBo user = (UserBo)SessionManager.getUserBo();
-		
+	public void executeGetUsercats() {
+		UserBo user = (UserBo) SessionManager.getUserBo();
+
 		new UserCatAsync().execute(user.get_userId());
 	}
-	
-	public void executeGetRemainCats()
-	{
-		UserBo user = (UserBo)SessionManager.getUserBo();
-        new UserRemainCatAsync().execute(user.get_userId());
+
+	public void executeGetRemainCats() {
+		UserBo user = (UserBo) SessionManager.getUserBo();
+		new UserRemainCatAsync().execute(user.get_userId());
 	}
-	
-	
+
 	private class CategoryAsync extends
 			AsyncTask<Void, Void, ArrayList<BaseBusiness>> {
 
@@ -80,18 +85,32 @@ public class CategoryTask extends BaseAsyncTaskManager {
 
 		@Override
 		protected ArrayList<BaseBusiness> doInBackground(Void... params) {
-			ArrayList<BaseBusiness> ArrayList = new WysApi().GetCategories();
+			boolean status = false;
 
-			return ArrayList;
+			ArrayList<BaseBusiness> ArrayList = new WysApi().GetCategories();
+			for (BaseBusiness category : ArrayList) {
+				status = CategoryModal.saveCategory(dbAdapter.getDb(),
+						(CategoryBo) category);
+			}
+			if (status) {
+				return ArrayList;
+			} else {
+				return null;
+			}
+
 		}
 
 		@Override
 		protected void onPostExecute(ArrayList<BaseBusiness> result) {
 			progressDialog.dismiss();
 			if (result != null) {
+
 				if (_onCategoriesListener != null) {
 					_onCategoriesListener.OnCategoriesReceived(result);
 				}
+			} else {
+				Toast.makeText(_ctx, "Error saving cats in local db",
+						Toast.LENGTH_LONG).show();
 			}
 
 			super.onPostExecute(result);
@@ -110,23 +129,21 @@ public class CategoryTask extends BaseAsyncTaskManager {
 
 		@Override
 		protected ArrayList<CategoryBo> doInBackground(Integer... params) {
-
 			ArrayList<CategoryBo> list = new WysApi()
 					.doGetUserCategories(params[0]);
 
 			return list;
+
 		}
 
 		@Override
 		protected void onPostExecute(ArrayList<CategoryBo> result) {
 			if (result != null) {
-               if(getOnGetUserCategoryListener() !=null)
-               {
-            	   getOnGetUserCategoryListener().onUserCategoryReceived(); 
-               }
-               else {
-            	   getOnGetUserCategoryListener().onUserCategoryNotReceived(); 
-               }
+				if (getOnGetUserCategoryListener() != null) {
+					getOnGetUserCategoryListener().onUserCategoryReceived();
+				} else {
+					getOnGetUserCategoryListener().onUserCategoryNotReceived();
+				}
 			}
 			super.onPostExecute(result);
 		}
@@ -153,22 +170,18 @@ public class CategoryTask extends BaseAsyncTaskManager {
 
 		@Override
 		protected void onPostExecute(ArrayList<CategoryBo> result) {
-			
-			if(result !=null)
-			{
-				if(getOnGetRemainCatListener() !=null)
-				{
+
+			if (result != null) {
+				if (getOnGetRemainCatListener() != null) {
 					getOnGetRemainCatListener().onRemainCatReceived();
 				}
-			}
-			else {
+			} else {
 
-				if(getOnGetRemainCatListener() !=null)
-				{
+				if (getOnGetRemainCatListener() != null) {
 					getOnGetRemainCatListener().onRemainCatNotReceived();
 				}
 			}
-			
+
 			super.onPostExecute(result);
 		}
 

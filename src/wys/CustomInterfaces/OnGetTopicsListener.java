@@ -7,6 +7,7 @@ import wys.Business.BaseBusiness;
 public interface OnGetTopicsListener {
 
 	
-	void onTopicsReceived(ArrayList<BaseBusiness> list);
+	void onTopicsReceived();
 	void onTopicsNotReceived();
+	void onEmptyServerRecord();
 }

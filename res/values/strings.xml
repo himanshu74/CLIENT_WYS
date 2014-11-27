@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">CLIENT</string>
+    <string name="app_name">WyS</string>
     <string name="hello_world">Hello world!</string>
+    <string name="sender_id">322605856647</string>
+    <string name="action_search">search</string>
+    <string name="search_hint">search</string>
+ 
 
 </resources>

@@ -17,8 +17,15 @@ public class UserBo extends BaseBusiness {
 	private int _isVerified;
 	private String _token;
 	private ArrayList<CategoryBo> userCategories;
+	private ArrayList<TopicBo> userTopics;
 
 	
+	public ArrayList<TopicBo> getUserTopics() {
+		return userTopics;
+	}
+	public void setUserTopics(ArrayList<TopicBo> userTopics) {
+		this.userTopics = userTopics;
+	}
 	public String get_username() {
 		return _username;
 	}

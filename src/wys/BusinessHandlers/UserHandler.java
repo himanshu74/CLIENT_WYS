@@ -49,6 +49,7 @@ public class UserHandler extends Jsonhandler {
 	private UserBo getUserBoFromJson(JSONObject jsonObject) throws JSONException{
 		UserBo user = new UserBo();
 		user.set_userId(jsonObject.getInt("UserId"));
+		user.set_serverId(jsonObject.getInt("UserId"));
 		user.set_username(jsonObject.getString("Username"));
 		user.set_password(jsonObject.getString("Password"));
 		user.set_email(jsonObject.getString("Email"));

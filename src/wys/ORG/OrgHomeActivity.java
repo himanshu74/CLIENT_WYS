@@ -15,13 +15,15 @@ import android.widget.ImageView;
 import wys.Api.SessionManager;
 import wys.AsyncTask.CategoryTask;
 import wys.Base.BaseActivity;
+import wys.Base.BaseDbActivity;
 import wys.Business.BaseBusiness;
 import wys.Business.CategoryBo;
 import wys.CustomInterfaces.OnGetCategoriesListener;
 import wys.ForumObjects.CategoryListActivity;
 import wys.FrontLayer.MainActivity;
+import wys.Helpers.CategoryHelper;
 
-public class OrgHomeActivity extends BaseActivity implements OnClickListener,
+public class OrgHomeActivity extends BaseDbActivity implements OnClickListener,
 		OnGetCategoriesListener {
 
 	private ImageView iv_logout;
@@ -30,36 +32,54 @@ public class OrgHomeActivity extends BaseActivity implements OnClickListener,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.org_home);
+		setContentView(R.layout.org_home_new);
 		InitControls();
 	}
 
 	private void InitControls() {
-		iv_logout = (ImageView) findViewById(R.id.iv_logout);
-		iv_logout.setOnClickListener(this);
+		 iv_logout = (ImageView) findViewById(R.id.iv_logout);
+		 iv_logout.setOnClickListener(this);
 		btn_cat = (Button) findViewById(R.id.btn_cat);
 		btn_cat.setOnClickListener(this);
 	}
 
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == iv_logout.getId()) {
-			SessionManager.setUserBo(null);
-			Intent i = new Intent(OrgHomeActivity.this, MainActivity.class);
-			startActivity(i);
-		} else if (v.getId() == btn_cat.getId()) {
-			CategoryTask cattask = new CategoryTask(OrgHomeActivity.this,
-					OrgHomeActivity.this);
-			cattask.ExecuteGetCategories();
+		 if (v.getId() == iv_logout.getId()) {
+		 SessionManager.setUserBo(null);
+		 Intent i = new Intent(OrgHomeActivity.this, MainActivity.class);
+		 startActivity(i);
+		 }
+
+		// /If Org User Logins for the first Time fetch from the server and
+		// Insert into the local db
+
+		if (v.getId() == btn_cat.getId()) {
+			if (getWYSPreferences().is_firstTimeUse()) {
+
+				CategoryTask cattask = new CategoryTask(OrgHomeActivity.this,
+						OrgHomeActivity.this, dbAdapter);
+				cattask.ExecuteGetCategories();
+
+			} else {
+				ArrayList<CategoryBo> clist = CategoryHelper
+						.getCategories(dbAdapter);
+				Intent i = new Intent(OrgHomeActivity.this,
+						CategoryListActivity.class);
+				i.putExtra("list", clist);
+				startActivity(i);
+			}
+
 		}
 
 	}
 
 	@Override
 	public void OnCategoriesReceived(ArrayList<BaseBusiness> list) {
-
+		getWYSPreferences().set_firstTimeUse(false);
+		ArrayList<CategoryBo> clist = CategoryHelper.getCategories(dbAdapter);
 		Intent i = new Intent(OrgHomeActivity.this, CategoryListActivity.class);
-		i.putExtra("list", list);
+		i.putExtra("list", clist);
 		startActivity(i);
 
 	}

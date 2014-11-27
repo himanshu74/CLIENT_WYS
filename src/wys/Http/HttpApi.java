@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -27,6 +28,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
@@ -131,7 +133,9 @@ public class HttpApi implements IHttpApi {
 
 			case 204:
 				return "0";
-
+			case 503: {
+				return "1";
+			}
 			default:
 				break;
 			}
@@ -139,27 +143,31 @@ public class HttpApi implements IHttpApi {
 		return null;
 	}
 
-	public String DoHttpPostJson(String url, JSONObject json) {	
-          HttpPost httpPost = createHttpJsonPost(url, json);
-          HttpResponse response = ExecuteHttpRequest(httpPost);
-          if (response != null) {
-  			switch (response.getStatusLine().getStatusCode()) {
-  			case 200:
-  				try {
-  					return EntityUtils.toString(response.getEntity());
-  				} catch (Exception ex) {
-  					Log.e(CLASS_TAG, "", ex);
-  				}
-  				break;
+	public String DoHttpPostJson(String url, JSONObject json) {
+		JSONObject jsonPostResponse = null;
+		HttpPost httpPost = createHttpJsonPost(url, json);
+		HttpResponse response = ExecuteHttpRequest(httpPost);
+		if (response != null) {
+			switch (response.getStatusLine().getStatusCode()) {
+			case 200:
+				try {
+					return EntityUtils.toString(response.getEntity());
 
-  			case 204:
-  				return "0";
-            
-  			default:
-  				break;
-  			}
-  		}
-  		return null;
+				} catch (Exception ex) {
+					Log.e(CLASS_TAG, "", ex);
+				}
+
+				break;
+
+			case 204:
+
+				return "0";
+
+			default:
+				break;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -179,17 +187,17 @@ public class HttpApi implements IHttpApi {
 
 	public HttpPost createHttpJsonPost(String url, JSONObject json) {
 		HttpPost httpPost = new HttpPost(url);
-		
+
 		try {
 			StringEntity entity = new StringEntity(json.toString());
+			httpPost.setHeader("Content-Type", "application/json;charset=UTF-8");
 			httpPost.setEntity(entity);
-					
 
 		} catch (UnsupportedEncodingException ue) {
 			Log.e(CLASS_TAG, "", ue);
 		}
 		return httpPost;
-		
+
 	}
 
 	@Override

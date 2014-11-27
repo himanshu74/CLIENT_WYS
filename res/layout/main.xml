@@ -24,23 +24,28 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
-   
-
     <RelativeLayout
         android:id="@+id/rel_signInButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="40dp"
-        android:layout_marginTop="30dp"
         android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp" >
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="30dp" >
 
-        
+        <Button
+            android:id="@+id/btn_backup"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" 
+            android:text="backUp"/>
+
         <Button
             android:id="@+id/btn_sign_up"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/btn_backup"
             android:background="#98C571"
             android:onClick="signMeUp"
             android:paddingBottom="6dp"
@@ -49,16 +54,16 @@
             android:paddingTop="6dp"
             android:text="Sign Up"
             android:textColor="#FFFFFF"
-            android:textSize="20sp" 
-            android:textStyle="bold"/>
-        
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
         <Button
             android:id="@+id/btn_signin"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/btn_sign_up"
-            android:background="#7DB7E2"
             android:layout_marginTop="10dp"
+            android:background="#7DB7E2"
             android:paddingBottom="6dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -67,11 +72,7 @@
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold" />
-        
     </RelativeLayout>
     <!-- #810102 -->
-
-
-    
 
 </RelativeLayout>

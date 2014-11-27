@@ -2,57 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:orientation="vertical" >
+
+      <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager_cats"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp" 
+        android:layout_marginBottom="55dp">
+    </android.support.v4.view.ViewPager>
     
-      <RelativeLayout
-        android:id="@+id/rel_title_category"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:paddingBottom="7dp"
-        android:paddingTop="7dp" >
-
-        <ImageView
-            android:id="@+id/iv_back"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/back_btn_selector"
-            android:onClick="BackToItemsList"
-            android:scaleType="fitXY" />
-
-        <TextView
-            android:id="@+id/tv_Category_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Categories"
-            android:textColor="@color/darkblue"
-            android:textSize="20sp"
-            android:textStyle="normal" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rel_cat_container"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rel_title_category"
-        android:paddingBottom="60dp"
-        android:paddingTop="30dp" >
-
-        <ListView
-            android:id="@+id/lv_categories"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:divider="@null"
-            android:dividerHeight="10dp" >
-        </ListView>
-    </RelativeLayout>
-
     <RelativeLayout
         android:id="@+id/rel_footer"
         android:layout_width="fill_parent"
@@ -61,11 +22,36 @@
         android:background="@drawable/rel" >
 
         <LinearLayout
+            android:id="@+id/lin_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="150dp"
+            android:paddingTop="8dp" >
+             <ImageView
+                android:id="@+id/iv_DeleteCategory"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/btn_delete_selector"
+                android:onClick="DeleteCategory"
+                android:scaleType="fitXY" />
+
+            <ImageView
+                android:id="@+id/iv_select_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tickwhite"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/lin_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:paddingLeft="150dp" 
             android:paddingTop="8dp" >
 
             <ImageView
@@ -74,10 +60,17 @@
                 android:layout_height="30dp"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/btn_logout_selector"
-                android:scaleType="fitXY" />
+                android:scaleType="fitXY"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/iv_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/crosswhite"
+                android:onClick="CancelDelete"
+                android:visibility="gone" />
         </LinearLayout>
     </RelativeLayout>
-    
-    
 
 </RelativeLayout>

@@ -6,91 +6,145 @@ import java.util.TimerTask;
 
 import com.wys.R;
 
-import android.app.SearchManager.OnDismissListener;
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.ActionBar.TabListener;
+import android.app.FragmentTransaction;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.drm.DrmStore.Action;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import wys.Adapter.TopicsPagerAdapter;
 import wys.Api.SessionManager;
 import wys.AsyncTask.Topictask;
-import wys.Base.BaseActivity;
+import wys.Base.BaseDbActivity;
+import wys.Base.BaseFragmentActivity;
 import wys.Business.BaseBusiness;
 import wys.Business.TopicBo;
 import wys.CustomInterfaces.OnGetTopicsListener;
+import wys.DatabaseHelpers.DBAdapter;
 import wys.Dialogs.EmptyContentDialog;
 import wys.Dialogs.NewTopicDialog;
 import wys.FrontLayer.MainActivity;
 import wys.Helpers.FontHelper;
+import wys.Helpers.TopicHelper;
 
-public class CategoryActivity extends BaseActivity implements OnClickListener,
-		android.content.DialogInterface.OnDismissListener, OnGetTopicsListener {
+public class CategoryActivity extends BaseFragmentActivity implements
+		OnClickListener, OnGetTopicsListener, TabListener, OnPageChangeListener {
 
+	// ////// PRIVATE CLASS VARIABLES \\\\\\\\\
 	private String _catName;
 	private int _catId;
 	private Context _ctx = CategoryActivity.this;
 	public static boolean isNewTopicAddded;
+	private String CategoryId = "CatId";
 
+	private TopicsPagerAdapter mAdapter;
+	private String[] tabs = { "Past", "Current", "Upcoming" };
+
+	// //// VIEW VARIABLES \\\\\\\\\\
 	private TextView tv_item_heading;
 	private ImageView iv_back, iv_logout, iv_deleteItem, iv_confirm, iv_cancel,
 			btn_addnew;
-	private ListView itemsListVIew;
-	RelativeLayout rel_footer, rel_footer2;
-
-	private ArrayList<TopicBo> topicList;
+	// private ListView itemsListVIew;
+	private ViewPager viewPager;
+	private ActionBar actionBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.topics);
-		initControls();
-		setListView();
-	}
-
-	@SuppressWarnings("unchecked")
-	private void initControls() {
 		Intent i = getIntent();
 		_catName = i.getStringExtra("catName");
 		_catId = i.getIntExtra("catId", -1);
-		topicList = (ArrayList<TopicBo>) i.getSerializableExtra("list");
-		tv_item_heading = (TextView) findViewById(R.id.tv_item_title);
-		tv_item_heading.setText(_catName.toLowerCase());
+		initTabControls();
+		initControls();
+
+	}
+
+	@SuppressLint("NewApi")
+	private void initTabControls() {
+		viewPager = (ViewPager) findViewById(R.id.pager);
+		actionBar = getActionBar();
+		mAdapter = new TopicsPagerAdapter(getSupportFragmentManager(), _ctx,
+				dbAdapter, _catId);
+
+		viewPager.setAdapter(mAdapter);
+		viewPager.setOnPageChangeListener(this);
+
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+		View v = LayoutInflater.from(this).inflate(R.layout.action_bar, null);
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayShowCustomEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(false);
+		actionBar.setCustomView(v);
+
+		// Adding Tabs
+		for (String tab_name : tabs) {
+			actionBar.addTab(actionBar.newTab().setText(tab_name)
+					.setTabListener(this));
+		}
+		viewPager.setCurrentItem(1);
+	}
+
+	private void initControls() {
+
+		tv_item_heading = (TextView) findViewById(R.id.tv_title);
+		tv_item_heading.setText(_catName);
 		tv_item_heading
 				.setTypeface(GetTypeFace(FontHelper.CATEGORY_TITLE_FONTSTYLE));
-		itemsListVIew = (ListView) findViewById(R.id.lv_items);
+
 		iv_back = (ImageView) findViewById(R.id.iv_back);
 		iv_back.setOnClickListener(this);
 		iv_logout = (ImageView) findViewById(R.id.iv_logout);
 		iv_logout.setOnClickListener(this);
-		iv_deleteItem = (ImageView) findViewById(R.id.iv_DeleteItem);
+		// iv_deleteItem = (ImageView) findViewById(R.id.iv_DeleteItem);
+
 		btn_addnew = (ImageView) findViewById(R.id.btn_addnew_Item);
 		btn_addnew.setOnClickListener(this);
-		iv_confirm = (ImageView) findViewById(R.id.iv_delconfirm);
-		iv_cancel = (ImageView) findViewById(R.id.iv_cancel);
 
-		rel_footer = (RelativeLayout) findViewById(R.id.rel_footer);
-		rel_footer2 = (RelativeLayout) findViewById(R.id.rel_footer2);
+		/*
+		 * iv_confirm = (ImageView) findViewById(R.id.iv_delconfirm); iv_cancel
+		 * = (ImageView) findViewById(R.id.iv_cancel);
+		 */
 
 	}
 
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == btn_addnew.getId()) {
-			NewTopicDialog newTopicDialog = new NewTopicDialog(_ctx, _catId);
-			newTopicDialog.setCanceledOnTouchOutside(false);
-			newTopicDialog.setOnDismissListener(this);
-			newTopicDialog.show();
+
+			Intent i = new Intent(CategoryActivity.this,
+					AddNewTopicActivity.class);
+			i.putExtra(CategoryId, _catId);
+			startActivity(i);
+			/*
+			 * NewTopicDialog newTopicDialog = new NewTopicDialog(_ctx, _catId);
+			 * newTopicDialog.setCanceledOnTouchOutside(false);
+			 * newTopicDialog.setOnDismissListener(this); newTopicDialog.show();
+			 */
 		}
 
 		else if (v.getId() == iv_back.getId()) {
@@ -110,17 +164,6 @@ public class CategoryActivity extends BaseActivity implements OnClickListener,
 
 	}
 
-	private void setListView() {
-
-		if (topicList == null || topicList.size() <= 0) {
-			ShowAutoDismissDialog();
-		} else {
-			CustomItemList customItemList = new CustomItemList(_ctx, topicList);
-			itemsListVIew.setAdapter(customItemList);
-		}
-
-	}
-
 	public void ShowAutoDismissDialog() {
 		final EmptyContentDialog emptyContentDialog = new EmptyContentDialog(
 				_ctx);
@@ -137,98 +180,20 @@ public class CategoryActivity extends BaseActivity implements OnClickListener,
 		}, 5000);
 	}
 
-	private class CustomItemList extends ArrayAdapter<TopicBo> {
-
-		private Context _ctx;
-		private ArrayList<TopicBo> topicList;
-
-		public CustomItemList(Context context, ArrayList<TopicBo> itemslist) {
-			super(context, R.layout.topic_list);
-			this._ctx = context;
-			this.topicList = itemslist;
-
-		}
-
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return topicList.size();
-		}
-
-		@Override
-		public TopicBo getItem(int position) {
-			// TODO Auto-generated method stub
-			return topicList.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return super.getItemId(position);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder viewHolder;
-			LayoutInflater inflator = LayoutInflater.from(_ctx);
-
-			if (convertView == null) {
-				viewHolder = new ViewHolder();
-				convertView = inflator.inflate(R.layout.topic_list, null);
-				viewHolder.tv_topicName = (TextView) convertView
-						.findViewById(R.id.tv_itemName);
-				viewHolder.iv_forwardArrow = (ImageView) convertView
-						.findViewById(R.id.iv_arrow);
-				convertView.setTag(viewHolder);
-			} else {
-				viewHolder = (ViewHolder) convertView.getTag();
-			}
-
-			viewHolder.tv_topicName.setText(topicList.get(position).get_name());
-			viewHolder.tv_topicName
-					.setTypeface(GetTypeFace(FontHelper.CATEGORY_NAME_FONTSTYLE));
-			viewHolder.iv_forwardArrow.setBackgroundResource(R.drawable.arrow);
-			return convertView;
-		}
-
-	}
-
-	static class ViewHolder {
-
-		TextView tv_topicName;
-		ImageView iv_forwardArrow;
-		CheckBox cb_DeleteCheckbx;
-
-	}
-
 	@Override
-	public void onDismiss(DialogInterface dialog) {
+	protected void onResume() {
+
 		if (isNewTopicAddded) {
-			new Topictask(_ctx, CategoryActivity.this).executeGetTopics(_catId);
+			viewPager.setCurrentItem(2);
+			viewPager.getAdapter().notifyDataSetChanged();
 		}
 
+		super.onResume();
 	}
 
 	@Override
-	public void onTopicsReceived(ArrayList<BaseBusiness> list) {
+	public void onTopicsReceived() {
 
-		CustomItemList customItemList = new CustomItemList(_ctx,
-				castTopicsList(list));
-		itemsListVIew.setAdapter(customItemList);
-
-	}
-
-	private static ArrayList<TopicBo> castTopicsList(
-			ArrayList<BaseBusiness> list) {
-
-		ArrayList<TopicBo> topicList = new ArrayList<TopicBo>();
-		for (BaseBusiness object : list) {
-			TopicBo topicBo = (TopicBo) object;
-			topicList.add(topicBo);
-
-		}
-
-		return topicList;
 	}
 
 	@Override
@@ -236,6 +201,48 @@ public class CategoryActivity extends BaseActivity implements OnClickListener,
 		Toast.makeText(_ctx, "OOPS!! Error Refereshing Data",
 				Toast.LENGTH_SHORT).show();
 		;
+
+	}
+
+	@Override
+	public void onEmptyServerRecord() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		viewPager.setCurrentItem(tab.getPosition());
+
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onPageSelected(int position) {
+		actionBar.setSelectedNavigationItem(position);
 
 	}
 

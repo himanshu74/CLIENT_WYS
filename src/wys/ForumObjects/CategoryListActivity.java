@@ -21,14 +21,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import wys.Api.SessionManager;
 import wys.AsyncTask.Topictask;
-import wys.Base.BaseActivity;
+import wys.Base.BaseDbActivity;
 import wys.Business.BaseBusiness;
 import wys.Business.CategoryBo;
+import wys.Business.TopicBo;
+import wys.Business.UserBo;
 import wys.CustomInterfaces.OnGetTopicsListener;
 import wys.FrontLayer.MainActivity;
 import wys.Helpers.FontHelper;
+import wys.Helpers.TopicHelper;
 
-public class CategoryListActivity extends BaseActivity implements
+public class CategoryListActivity extends BaseDbActivity implements
 		OnClickListener, OnGetTopicsListener, OnItemClickListener {
 
 	private ListView categoryList;
@@ -84,12 +87,24 @@ public class CategoryListActivity extends BaseActivity implements
 		catName = category.get_categoryName();
 		catId = category.get_categoryId();
 
-		getTopics(catId);
+		/*if (!getWYSPreferences().isIstopicsExistLocal()) {
+			// Calling server to get the topics for the first time and save in
+			// local db
+			fetchTopicsFromServer();
+		} else {*/
+
+			Intent i = new Intent(_ctx, CategoryActivity.class);
+			i.putExtra("catName", catName);
+			i.putExtra("catId", catId);
+			startActivity(i);
+
+		
 
 	}
 
-	private void getTopics(int catId) {
-		new Topictask(_ctx, CategoryListActivity.this).executeGetTopics(catId);
+	private void fetchTopicsFromServer() {
+		new Topictask(_ctx, CategoryListActivity.this, dbAdapter)
+				.executeGetAllTopics();
 	}
 
 	private void setListview() {
@@ -161,18 +176,26 @@ public class CategoryListActivity extends BaseActivity implements
 	}
 
 	@Override
-	public void onTopicsReceived(ArrayList<BaseBusiness> list) {
+	public void onTopicsReceived() {
+		getWYSPreferences().setIstopicsExistLocal(true);
 		Intent i = new Intent(_ctx, CategoryActivity.class);
 		i.putExtra("catName", catName);
 		i.putExtra("catId", catId);
-		i.putExtra("list", list);
 		startActivity(i);
-
 	}
 
 	@Override
 	public void onTopicsNotReceived() {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onEmptyServerRecord() {
+		Intent i = new Intent(_ctx, CategoryActivity.class);
+		i.putExtra("catName", catName);
+		i.putExtra("catId", catId);
+		startActivity(i);
 
 	}
 

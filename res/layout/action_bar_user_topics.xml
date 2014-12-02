@@ -30,17 +30,16 @@
             android:text="Topics"
             android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/tv_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/iv_search"
+            android:layout_width="35dp"
+            android:layout_height="25dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="3dp"
             android:layout_marginTop="5dp"
+            android:background="@drawable/searchsmall"
             android:clickable="true"
-            android:text="New"
-            android:textColor="@color/darkblue"
-            android:textSize="18sp" />
+            android:scaleType="fitXY" />
     </RelativeLayout>
 
 </LinearLayout>

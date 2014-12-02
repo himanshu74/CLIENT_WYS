@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import android.R.integer;
 import wys.Business.BaseBusiness;
 import wys.Business.CategoryBo;
+import wys.Business.ErrorReporter;
 import wys.Business.TopicBo;
 import wys.Business.UserBo;
 import wys.BusinessHandlers.CategoryHandler;
@@ -35,10 +36,10 @@ public class WysApi {
 	private static final int ERROR = 1;
 
 	private static final String HOST = "http://";
-	 private static final String DOMAIN = "192.168.0.5/WYS/api/";
+	private static final String DOMAIN = "192.168.0.5/WYS/api/";
 	// private static final String DOMAIN = "129.107.144.192/WYS/api/";
 	// private static final String DOMAIN = "10.226.50.83/WYS/api/";
-	//private static final String DOMAIN = "jangra.com.s10.dotnetpark.com/api/";
+	// private static final String DOMAIN ="jangra.com.s10.dotnetpark.com/api/";
 
 	private IHttpApi mHttpApi;
 
@@ -54,48 +55,9 @@ public class WysApi {
 
 	// //////////// NETWORK OPERATIONS METHODS \\\\\\\\\\\\\\\
 
-	public static int PostSignUp(UserBo user) {
-		DefaultHttpClient client = new DefaultHttpClient();
-		// HttpConnectionParams.setConnectionTimeout(client.getParams(),10000);
-
-		HttpResponse response;
-		JSONObject json = new JSONObject();
-		String Url = "http://192.168.1.22/WYS/api/user/";
-
-		try {
-			HttpPost post = new HttpPost(Url);
-			json.put("Username", user.get_username());
-			json.put("Password", user.get_password());
-			json.put("Email", user.get_email());
-			json.put("RoleId", user.get_roleId());
-			json.put("DomainId", user.get_domainId());
-
-			StringEntity se = new StringEntity(json.toString());
-			se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE,
-					"application/json"));
-			post.setEntity(se);
-			response = client.execute(post);
-			if (response != null) {
-
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT) {
-					return SUCCESS;
-				} else {
-					return ERROR;
-				}
-
-			} else {
-				return ERROR;
-			}
-		} catch (Exception exception) {
-			exception.printStackTrace();
-			return ERROR;
-		}
-
-	}
-
 	public int DoSignUp(UserBo user) {
 
-		NameValuePair[] postBody = new NameValuePair[5];
+		NameValuePair[] postBody = new NameValuePair[6];
 		postBody[0] = (new BasicNameValuePair("Username", user.get_username()));
 		postBody[1] = (new BasicNameValuePair("Password", user.get_password()));
 		postBody[2] = (new BasicNameValuePair("Email", user.get_email()));
@@ -103,6 +65,7 @@ public class WysApi {
 				.get_roleId())));
 		postBody[4] = (new BasicNameValuePair("DomainId", Integer.toString(user
 				.get_domainId())));
+		postBody[5] = (new BasicNameValuePair("RegId", user.getRegId()));
 
 		String url = GetUrl(UrlManager.FETCH_SIGNUP_URL);
 		String response = mHttpApi.DoHttpPost(url, postBody);
@@ -118,7 +81,6 @@ public class WysApi {
 
 	}
 
-	// Time not Yet Provided
 	public int PostTopic(TopicBo topic) {
 		int status = -1;
 
@@ -128,8 +90,10 @@ public class WysApi {
 			jsonTopic.put("DomainId", topic.get_domainId());
 			jsonTopic.put("UserId", topic.get_userId());
 			jsonTopic.put("BeginDateUnix", topic.get_bgeindateUnixUTC());
+			jsonTopic.put("BeginDateString", topic.get_beginDateString());
+			jsonTopic.put("EndDateString", topic.get_endDateString());
 			jsonTopic.put("KeyWord", topic.get_keyword());
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -162,8 +126,9 @@ public class WysApi {
 					GetUrl(UrlManager.FETCH_POST_USER_CATS_URL), jsonUser);
 			if (!response.equals(null) && response.equals("0")) {
 				status = SUCCESS;
-			} else
+			} else if (response.equals(null) || response.equals("1")) {
 				status = ERROR;
+			}
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -190,8 +155,10 @@ public class WysApi {
 					GetUrl(UrlManager.FETCH_POST_USER_CATS_URL), jsonUser);
 			if (!response.equals(null) && response.equals("0")) {
 				status = SUCCESS;
-			} else
+			} else if (response.equals(null) || response.equals("1")) {
 				status = ERROR;
+
+			}
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -218,8 +185,9 @@ public class WysApi {
 					GetUrl(UrlManager.FETCH_DELETE_USER_CAT_URL), jsonUser);
 			if (!response.equals(null) && response.equals("0")) {
 				status = SUCCESS;
-			} else
+			} else if (response.equals(null) || response.equals("1")) {
 				status = ERROR;
+			}
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -241,6 +209,7 @@ public class WysApi {
 				.DoHttpRequestJson(get, objectHanlder);
 
 		return users;
+
 	}
 
 	public ArrayList<BaseBusiness> DoVerifyUser(String username, String code) {
@@ -254,6 +223,7 @@ public class WysApi {
 				.DoHttpRequestJson(get, objectHandler);
 
 		return users;
+
 	}
 
 	public ArrayList<BaseBusiness> DoSignIn(String username, String password) {
@@ -268,7 +238,6 @@ public class WysApi {
 		if (users != null) {
 			SessionManager.setUserBo(users.get(0));
 		}
-
 		return users;
 	}
 
@@ -282,7 +251,9 @@ public class WysApi {
 		@SuppressWarnings("unchecked")
 		ArrayList<BaseBusiness> users = (ArrayList<BaseBusiness>) mHttpApi
 				.DoHttpRequestJson(get, objectHandler);
+
 		return users;
+
 	}
 
 	public ArrayList<BaseBusiness> GetCategories() {
@@ -293,16 +264,17 @@ public class WysApi {
 		@SuppressWarnings("unchecked")
 		ArrayList<BaseBusiness> cats = (ArrayList<BaseBusiness>) mHttpApi
 				.DoHttpRequestJson(get, categoryHandler);
+
 		return cats;
 	}
 
-	public ArrayList<BaseBusiness> getTopics(int catId) {
+	public ArrayList<TopicBo> getTopics(int catId) {
 
 		String path = String.format(UrlManager.FETCH_GETTOPICS_URL, catId);
 		HttpGet get = mHttpApi.CreateHttpGet(GetUrl(path));
 		TopicHandler topicHandler = new TopicHandler();
 		@SuppressWarnings("unchecked")
-		ArrayList<BaseBusiness> topics = (ArrayList<BaseBusiness>) mHttpApi
+		ArrayList<TopicBo> topics = (ArrayList<TopicBo>) mHttpApi
 				.DoHttpRequestJson(get, topicHandler);
 
 		return topics;

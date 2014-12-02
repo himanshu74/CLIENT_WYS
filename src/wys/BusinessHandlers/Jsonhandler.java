@@ -21,6 +21,7 @@ public class Jsonhandler {
 	private static final String CLASS_TAG = Jsonhandler.class.getSimpleName();
 	public int ResponseCode = 200;
 	public Boolean isSingleResultExpected=false;
+	public boolean isSingleCommentExpected=false;
     
 	private void SetValuesFromHeader(HttpResponse response) {
 

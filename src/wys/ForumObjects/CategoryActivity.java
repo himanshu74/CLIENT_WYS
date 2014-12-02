@@ -50,7 +50,7 @@ import wys.Helpers.FontHelper;
 import wys.Helpers.TopicHelper;
 
 public class CategoryActivity extends BaseFragmentActivity implements
-		OnClickListener, OnGetTopicsListener, TabListener, OnPageChangeListener {
+		OnClickListener, TabListener, OnPageChangeListener {
 
 	// ////// PRIVATE CLASS VARIABLES \\\\\\\\\
 	private String _catName;
@@ -76,7 +76,7 @@ public class CategoryActivity extends BaseFragmentActivity implements
 		setContentView(R.layout.topics);
 		Intent i = getIntent();
 		_catName = i.getStringExtra("catName");
-		_catId = i.getIntExtra("catId", -1);
+		_catId = i.getIntExtra("catid", -1);
 		initTabControls();
 		initControls();
 
@@ -189,25 +189,6 @@ public class CategoryActivity extends BaseFragmentActivity implements
 		}
 
 		super.onResume();
-	}
-
-	@Override
-	public void onTopicsReceived() {
-
-	}
-
-	@Override
-	public void onTopicsNotReceived() {
-		Toast.makeText(_ctx, "OOPS!! Error Refereshing Data",
-				Toast.LENGTH_SHORT).show();
-		;
-
-	}
-
-	@Override
-	public void onEmptyServerRecord() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

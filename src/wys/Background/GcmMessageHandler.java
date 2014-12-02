@@ -57,7 +57,7 @@ public class GcmMessageHandler extends IntentService {
 	         
 	        String title = context.getString(R.string.app_name);
 	         
-	        Intent notificationIntent = new Intent(context, CategoryActivity.class);
+	        Intent notificationIntent = new Intent(context, MainActivity.class);
 	        // set intent so it does not start a new activity
 	        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
 	                Intent.FLAG_ACTIVITY_SINGLE_TOP);

@@ -19,9 +19,7 @@ public class TopicHelper {
 						TopicModal.COL_TOPIC_Id, TopicModal.COL_TOPIC_NAME,
 						TopicModal.COL_CAT_ID, TopicModal.COL_CONCLUSION,
 						TopicModal.COL_BEGIN_DATE }, TopicModal.COL_IS_ACTIVE
-						+ " =" + BaseBusiness.CURRENT_TOPICS + " and "+TopicModal.COL_BEGIN_DATE+
-						" >= datetime('now','utc') and "
-						+ TopicModal.COL_CAT_ID + "=? ",
+						+ " = 0 and "+ TopicModal.COL_CAT_ID + "=? ",
 				new String[] { categoryId + "" }, null, null, null);
 
 		if (cursor.moveToNext()) {
@@ -54,8 +52,7 @@ public class TopicHelper {
 						TopicModal.COL_TOPIC_Id, TopicModal.COL_TOPIC_NAME,
 						TopicModal.COL_CAT_ID, TopicModal.COL_CONCLUSION,
 						TopicModal.COL_BEGIN_DATE }, TopicModal.COL_IS_ACTIVE
-						+ " = 0 and "+TopicModal.COL_BEGIN_DATE+
-						" < datetime('now','utc') and "
+						+ " = 0 and "
 						+ TopicModal.COL_CAT_ID + " =? ",
 				new String[] { categoryId + "" }, null, null, null);
 
@@ -90,8 +87,9 @@ public class TopicHelper {
 						TopicModal.COL_TOPIC_Id, TopicModal.COL_TOPIC_NAME,
 						TopicModal.COL_CAT_ID, TopicModal.COL_CONCLUSION,
 						TopicModal.COL_BEGIN_DATE }, TopicModal.COL_IS_ACTIVE
-						+ " =" + BaseBusiness.UPCOMING_TOPICS + " and "+TopicModal.COL_BEGIN_DATE+
-						"> datetime('now','utc') and "
+						+ " =" + BaseBusiness.UPCOMING_TOPICS + " and "
+						+ TopicModal.COL_BEGIN_DATE
+						+ "> datetime('now','utc') and "
 						+ TopicModal.COL_CAT_ID + " =? ",
 				new String[] { categoryId + "" }, null, null, null);
 
@@ -120,11 +118,8 @@ public class TopicHelper {
 
 	}
 
-	
-	//////// USER SPECIFIC TOPICS
-	
-	
-	
+	// ////// USER SPECIFIC TOPICS
+
 	public static ArrayList<TopicBo> getUserUpcomingTopicsByCatId(
 			DBAdapter dbAdapter, int categoryId) {
 
@@ -136,10 +131,11 @@ public class TopicHelper {
 				+ TopicModal.COL_CONCLUSION + ",t." + TopicModal.COL_DATEADDED
 				+ ",t." + TopicModal.COL_IS_ACTIVE + ",t."
 				+ TopicModal.COL_BEGIN_DATE + " from " + TopicModal.TABLE_NAME
-				+ " t where t."
-				+ TopicModal.COL_SERVER_ID + " not in( select tu."
-				+ TopicModal.COL_TOPIC_Id + " from "
-				+ TopicModal.TOPIC_USER_TABLE + " tu)";
+				+ " t where t." + TopicModal.COL_SERVER_ID
+				+ " not in( select tu." + TopicModal.COL_TOPIC_Id + " from "
+				+ TopicModal.TOPIC_USER_TABLE
+				+ " tu) and datetime('now','utc') < t."
+				+ TopicModal.COL_BEGIN_DATE;
 
 		Cursor cursor = dbAdapter.getDb().rawQuery(query, null);
 		if (cursor.moveToNext()) {
@@ -162,7 +158,7 @@ public class TopicHelper {
 				cursor.moveToNext();
 			}
 		}
-        cursor.close();
+		cursor.close();
 		return topics;
 	}
 
@@ -179,9 +175,11 @@ public class TopicHelper {
 				+ TopicModal.COL_SERVER_ID + " in (select tu."
 				+ TopicModal.COL_TOPIC_Id + " from "
 				+ TopicModal.TOPIC_USER_TABLE + " tu where tu."
-				+ TopicModal.COL_USER_ID + "=" + userId + ") and ( t."
-				+ TopicModal.COL_IS_ACTIVE + " =1 or t."
-				+ TopicModal.COL_IS_ACTIVE + " =0)";
+				+ TopicModal.COL_USER_ID + "=" + userId + ") and  t."
+				+ TopicModal.COL_IS_ACTIVE
+				+ " =0 and datetime('now','utc') >= t."
+				+ TopicModal.COL_BEGIN_DATE + " and datetime('now','utc') < t."
+				+ TopicModal.COL_END_DATE;
 
 		Cursor cursor = dbAdapter.getDb().rawQuery(query, null);
 		if (cursor.moveToFirst()) {
@@ -189,13 +187,13 @@ public class TopicHelper {
 				TopicBo topic = new TopicBo();
 				topic.set_topicId(cursor.getInt(cursor
 						.getColumnIndex(TopicModal.COL_TOPIC_Id)));
-				
+
 				topic.set_serverId(cursor.getInt(cursor
 						.getColumnIndex(TopicModal.COL_SERVER_ID)));
-				
+
 				topic.set_name(cursor.getString(cursor
 						.getColumnIndex(TopicModal.COL_TOPIC_NAME)));
-				
+
 				topic.set_conclusion(cursor.getString(cursor
 						.getColumnIndex(TopicModal.COL_CONCLUSION)));
 				topic.set_isActive(cursor.getInt(cursor
@@ -203,11 +201,10 @@ public class TopicHelper {
 				// topic.set_dateAdded(cursor.getString(cursor.getColumnIndex(TopicModal.COL_DATEADDED)));
 				topics.add(topic);
 				cursor.moveToNext();
-				
 
 			}
 		}
-        cursor.close();
+		cursor.close();
 		return topics;
 	}
 
@@ -225,7 +222,9 @@ public class TopicHelper {
 				+ TopicModal.COL_TOPIC_Id + " from "
 				+ TopicModal.TOPIC_USER_TABLE + " tu where tu."
 				+ TopicModal.COL_USER_ID + "=" + userId + ") and t."
-				+ TopicModal.COL_IS_ACTIVE + " =2";
+				+ TopicModal.COL_IS_ACTIVE
+				+ " =0 and datetime('now','utc') > t."
+				+ TopicModal.COL_END_DATE;
 
 		Cursor cursor = dbAdapter.getDb().rawQuery(query, null);
 		if (cursor.moveToFirst()) {
@@ -244,11 +243,10 @@ public class TopicHelper {
 				// topic.set_dateAdded(cursor.getString(cursor.getColumnIndex(TopicModal.COL_DATEADDED)));
 				cursor.moveToNext();
 				topics.add(topic);
-			
 
 			}
 		}
-        cursor.close();
+		cursor.close();
 		return topics;
 	}
 

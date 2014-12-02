@@ -63,7 +63,6 @@ public class SignUpDialog extends Dialog implements
 	private void openVerificationScreen() {
 
 		SignUpDialog.this.dismiss();
-
 		VerificationDialog veriDialog = new VerificationDialog(_ctx);
 		veriDialog.setCanceledOnTouchOutside(false);
 		veriDialog.show();
@@ -76,7 +75,7 @@ public class SignUpDialog extends Dialog implements
 		String password = et_password.getText().toString();
 		String email = et_email.getText().toString();
 		String confirm = et_confirm.getText().toString();
-
+        
 		if (validateFields(username, password, email, confirm)) {
 			validateUsernameAvail(username);
 

@@ -65,7 +65,7 @@ public class CategoryPagerAdaptor extends FragmentPagerAdapter {
          		_otherCategoriesFragment.onEditStatePressed();
          	}
          	else {
-         		Toast.makeText(_ctx, "NullValue for OtherCategories Object", Toast.LENGTH_LONG).show();
+         		//Toast.makeText(_ctx, "NullValue for OtherCategories Object", Toast.LENGTH_LONG).show();
          	}
 	}
 	
@@ -74,7 +74,7 @@ public class CategoryPagerAdaptor extends FragmentPagerAdapter {
 			_myCategoriesFragment.onDeletePressed();
      	}
      	else {
-     		Toast.makeText(_ctx, "NullValue for MyCategories Object", Toast.LENGTH_LONG).show();
+     		//Toast.makeText(_ctx, "NullValue for MyCategories Object", Toast.LENGTH_LONG).show();
      	}
 	}
 	
@@ -84,7 +84,7 @@ public class CategoryPagerAdaptor extends FragmentPagerAdapter {
      		_otherCategoriesFragment.onCanCelPressed();
      	}
      	else {
-     		Toast.makeText(_ctx, "NullValue for OtherCategories Object", Toast.LENGTH_LONG).show();
+     		//Toast.makeText(_ctx, "NullValue for OtherCategories Object", Toast.LENGTH_LONG).show();
      	}
 	}
 	
@@ -99,7 +99,7 @@ public class CategoryPagerAdaptor extends FragmentPagerAdapter {
 	     		_otherCategoriesFragment.onConfirmPressed();
 	     	}
 	     	else {
-	     		Toast.makeText(_ctx, "NullValue for OtherCategories Object", Toast.LENGTH_LONG).show();
+	     		//Toast.makeText(_ctx, "NullValue for OtherCategories Object", Toast.LENGTH_LONG).show();
 	     	}
 		}
 		

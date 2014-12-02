@@ -13,6 +13,18 @@ public class BaseBusiness implements Serializable {
 	public static final int UPCOMING_TOPICS =0;
 	public static final int PAST_TOPICS=2;
 
+	private boolean isResponse503 =false;
+
+	public boolean isResponse503() {
+		return isResponse503;
+	}
+
+	public void setResponse503(boolean isResponse503) {
+		this.isResponse503 = isResponse503;
+	}
+
+	
+
 	private int status;
 	private String token;
 

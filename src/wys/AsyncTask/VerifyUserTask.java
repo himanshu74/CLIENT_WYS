@@ -52,7 +52,9 @@ public class VerifyUserTask extends BaseAsyncTaskManager {
 			if (users != null) {
 				result = users.get(0).getStatus();
 			}
-
+			else {
+				result = SERVER_ERROR;
+			}
 			return result;
 		}
 
@@ -72,8 +74,8 @@ public class VerifyUserTask extends BaseAsyncTaskManager {
 				{
 					_onVerifyingUser.OnVerificationFail();
 				}
-			} else {
-
+			} else if(result == SERVER_ERROR) {
+                 Toast.makeText(_ctx, "OOPS!! SERVER NOT RESPONDING", Toast.LENGTH_SHORT).show();
 			}
 			super.onPostExecute(result);
 		}
@@ -88,7 +90,13 @@ public class VerifyUserTask extends BaseAsyncTaskManager {
 			String email = params[0].get_email();
 			ArrayList<BaseBusiness> users = new WysApi()
 					.DoResendVerificationCode(username, email);
-			result = users.get(0).getStatus();
+			if(users !=null){
+				result = users.get(0).getStatus();
+
+			}
+			else if(users == null){
+				result = SERVER_ERROR;
+			}
 			return result;
 		}
 
@@ -119,8 +127,9 @@ public class VerifyUserTask extends BaseAsyncTaskManager {
 				_onVerifyingUser.OnResendFail();
 			}
 
-			else {
-				Log.e(CLASS_TAG, "There is error in wysApi call");
+			else if(result == SERVER_ERROR) {
+				Toast.makeText(_ctx, "OOPS !! SERVER NOT RESPONDING",
+						Toast.LENGTH_SHORT).show();
 			}
 
 			super.onPostExecute(result);

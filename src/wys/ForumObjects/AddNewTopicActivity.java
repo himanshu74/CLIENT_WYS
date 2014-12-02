@@ -2,6 +2,7 @@ package wys.ForumObjects;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -16,14 +17,18 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+import wys.AsyncTask.OrgAsync;
 import wys.AsyncTask.Topictask;
 import wys.Base.BaseActivity;
 import wys.Base.BaseDbActivity;
+import wys.Business.TopicBo;
+import wys.CustomInterfaces.OnGetTopicsListener;
 import wys.CustomInterfaces.OnTopicPostListener;
 import wys.Dialogs.NewTopicDialog;
+import wys.Fragments.UpcomingTopicFragment;
 
 public class AddNewTopicActivity extends BaseDbActivity implements
-		OnClickListener, OnTopicPostListener {
+		OnClickListener, OnTopicPostListener, OnGetTopicsListener {
 
 	private Button btn_create;
 	private EditText et_new_topic, et_tag;
@@ -48,7 +53,7 @@ public class AddNewTopicActivity extends BaseDbActivity implements
 		et_new_topic = (EditText) findViewById(R.id.et_new_topic);
 		et_tag = (EditText) findViewById(R.id.et_tag);
 		dp = (DatePicker) findViewById(R.id.dp);
-		//dp.setMinDate(System.currentTimeMillis() - 1000);
+		// dp.setMinDate(System.currentTimeMillis() - 1000);
 	}
 
 	@Override
@@ -58,7 +63,7 @@ public class AddNewTopicActivity extends BaseDbActivity implements
 		if (topicName.length() <= 0 || keyword.length() <= 0) {
 			et_new_topic.setError("All fields are mandatory");
 		} else {
-			Topictask topictask = new Topictask(_ctx,dbAdapter);
+			Topictask topictask = new Topictask(_ctx, dbAdapter);
 			topictask.setOntopicPostListener(AddNewTopicActivity.this);
 			getbeginDate();
 			try {
@@ -73,34 +78,25 @@ public class AddNewTopicActivity extends BaseDbActivity implements
 	}
 
 	private long getbeginDate() {
-		
+
 		long date = dp.getCalendarView().getDate();
 		Date date1 = new Date(date);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
 		String dateSTring = sdf.format(date1);
-		/*Date localTime = new Date(date);
-		String format = "yyyy/MM/dd HH:mm:ss";
-		SimpleDateFormat sdf = new SimpleDateFormat (format);
 
-		// Convert Local Time to UTC (Works Fine) 
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-		@SuppressWarnings("deprecation")
-		Date gmtTime = new Date(sdf.format(localTime));
-		long unix= gmtTime.getTime();
-		
-		long date = dp.getCalendarView().getDate();
-		Date d = new Date(date);
-		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-		return format.format(d);*/
 		return date;
 	}
 
 	@Override
 	public void onTopicPosted() {
-		CategoryActivity.isNewTopicAddded = true;
-		AddNewTopicActivity.this.finish();
+		downloadlatestData();
 		Toast.makeText(_ctx, "New topic Posted", Toast.LENGTH_LONG).show();
 		;
+
+	}
+
+	private void downloadlatestData() {
+		new OrgAsync(_ctx, this).executeGetOrgUpTopics(domainid);
 	}
 
 	@Override
@@ -108,6 +104,25 @@ public class AddNewTopicActivity extends BaseDbActivity implements
 		Toast.makeText(_ctx, "OOPS !! Something went wrong,Try again",
 				Toast.LENGTH_LONG).show();
 		;
+	}
+
+	@Override
+	public void onTopicsReceived(ArrayList<TopicBo> list) {
+		UpcomingTopicFragment.orgUpcomingList = list;
+		CategoryActivity.isNewTopicAddded = true;
+		AddNewTopicActivity.this.finish();
+
+	}
+
+	@Override
+	public void onTopicsNotReceived() {
+
+	}
+
+	@Override
+	public void onEmptyServerRecord() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

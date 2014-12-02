@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/rel_header_org"
-        android:layout_marginTop="60dp" >
+        android:layout_marginTop="20dp" >
 
         <ImageView
             android:id="@+id/iv_category"
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/rel_categories"
-        android:layout_marginTop="40dp" >
+        android:layout_marginTop="20dp" >
 
         <Button
             android:id="@+id/btn_profile"
@@ -91,6 +91,34 @@
             android:layout_marginLeft="10dp"
             android:background="@drawable/profile1"
             android:scaleType="fitXY" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rel_profile"
+        android:layout_marginTop="20dp" >
+
+        <ImageView
+            android:id="@+id/iv_search"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/search"
+            android:scaleType="fitXY" />
+
+        <Button
+            android:id="@+id/btn_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/blue_theme_button_selector"
+            android:text="Search"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
     </RelativeLayout>
 
     <RelativeLayout

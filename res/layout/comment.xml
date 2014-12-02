@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/signup_dialog_shape" >
+
+    <RelativeLayout
+        android:id="@+id/rel_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" >
+
+        <TextView
+            android:id="@+id/tv_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Q: What you think about android 5.0?"
+            android:textColor="@color/darkblue"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_comment_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rel_header"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20dp" >
+
+        <TextView
+            android:id="@+id/tv_comment_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="0dp"
+            android:text="Comment(s):"
+            android:textColor="@color/darkblue"
+            android:textSize="20sp" />
+
+        <ListView
+            android:id="@+id/lv_comment"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_comment_header"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:divider="@null"
+            android:dividerHeight="5dp" >
+        </ListView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_conclusion_header"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rel_comment_header"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20dp" >
+
+        <TextView
+            android:id="@+id/tv_conclusion_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="0dp"
+            android:text="Conclusion:"
+            android:textColor="@color/darkblue"
+            android:textSize="26sp" />
+
+        <EditText
+            android:id="@+id/et_comment"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_conclusion_header"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/apptheme_edit_text_holo_light"
+            android:hint="Comment.."
+            android:inputType="textMultiLine" />
+    </RelativeLayout>
+
+</RelativeLayout>

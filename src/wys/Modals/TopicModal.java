@@ -19,6 +19,7 @@ public class TopicModal extends AppModal {
 	public static final String COL_CONCLUSION = "conclusion";
 	public static final String COL_DATEADDED = "date_added";
 	public static final String COL_BEGIN_DATE = "begin_date";
+	public static final String COL_END_DATE="end_date";
 	public static final String COL_TOPIC_USER_ID = "id";
 	public static final String COL_IS_ACTIVE = "is_active";
 
@@ -27,7 +28,7 @@ public class TopicModal extends AppModal {
 			+ " integer primary key autoincrement," + COL_SERVER_ID
 			+ " integer," + COL_CAT_ID + " integer," + COL_USER_ID
 			+ " integer," + COL_TOPIC_NAME + " varchar(20)," + COL_CONCLUSION
-			+ " varchar(20)," + COL_BEGIN_DATE + " varchar,"
+			+ " varchar(20)," + COL_BEGIN_DATE + " varchar,"+COL_END_DATE+" varchar,"
 			+ COL_IS_ACTIVE + " integer," + COL_IS_SERVED + " integer,"
 			+ COL_DATEADDED + " varchar(20))";
 

@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import android.util.Log;
 import wys.Business.BaseBusiness;
+import wys.Business.ErrorReporter;
 import wys.BusinessHandlers.Jsonhandler;
 
 public class HttpApi implements IHttpApi {
@@ -105,7 +106,7 @@ public class HttpApi implements IHttpApi {
 						Log.e(CLASS_TAG, "", ex);
 					}
 				}
-
+		
 			default:
 				return null;
 			}
@@ -136,6 +137,8 @@ public class HttpApi implements IHttpApi {
 			case 503: {
 				return "1";
 			}
+			case 404:
+				return "1";
 			default:
 				break;
 			}
@@ -163,6 +166,12 @@ public class HttpApi implements IHttpApi {
 
 				return "0";
 
+			case 503:
+				return "1";
+			case 404:
+				return "1";
+			case 500:
+				return "1";
 			default:
 				break;
 			}
@@ -231,4 +240,12 @@ public class HttpApi implements IHttpApi {
 		return params;
 	}
 
+	private ArrayList<BaseBusiness> returnErrorResponse() {
+		ErrorReporter errorReporter = new ErrorReporter();
+		errorReporter.setResponse503(true);
+		ArrayList<BaseBusiness> errors = new ArrayList<BaseBusiness>();
+		errors.add(errorReporter);
+		return errors;
+
+	}
 }

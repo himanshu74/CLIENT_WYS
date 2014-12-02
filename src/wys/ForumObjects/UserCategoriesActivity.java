@@ -50,7 +50,8 @@ import wys.Helpers.FontHelper;
 import wys.ORG.OrgHomeActivity;
 
 public class UserCategoriesActivity extends BaseFragmentActivity implements
-		OnClickListener, OnUserCatPost,OnPageChangeListener,TabListener,Serializable {
+		OnClickListener, OnUserCatPost, OnPageChangeListener, TabListener,
+		Serializable {
 
 	/**
 	 * 
@@ -60,9 +61,9 @@ public class UserCategoriesActivity extends BaseFragmentActivity implements
 	private ImageView iv_back;
 	private static ImageView iv_logout;
 	private static ImageView iv_cancel;
-	private static ImageView iv_select_confirm,iv_DeleteCategory;
+	private static ImageView iv_select_confirm, iv_DeleteCategory;
 	private ArrayList<CategoryBo> listCats;
-	private TextView tv_Category_title,tv_edit;
+	private TextView tv_Category_title, tv_edit;
 	private Context _ctx = UserCategoriesActivity.this;
 	private String catName;
 	private int catId;
@@ -73,53 +74,52 @@ public class UserCategoriesActivity extends BaseFragmentActivity implements
 	ArrayList<CategoryBo> CatsSelected, categories;
 	UserBo user;
 	private Button btn_categories;
-	
+	public static boolean isMyCategories = false;
 	private CategoryPagerAdaptor mAdapter;
-	
+
 	private ViewPager viewPager;
 	private ActionBar actionBar;
-	private String[] tabs = { "Other", "My Categories"};
-
+	private String[] tabs = { "Other", "My Categories" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.user_cats);
 		user = (UserBo) SessionManager.getUserBo();
-		
+
 		initTabConntrols();
 		initControls();
-		//setRemaininigList();
+		
 	}
 
 	@SuppressLint("NewApi")
-	private void initTabConntrols(){
+	private void initTabConntrols() {
 		viewPager = (ViewPager) findViewById(R.id.pager_cats);
 		actionBar = getActionBar();
-		
-		mAdapter = new CategoryPagerAdaptor(getSupportFragmentManager(),_ctx,dbAdapter);
+
+		mAdapter = new CategoryPagerAdaptor(getSupportFragmentManager(), _ctx,
+				dbAdapter);
 		viewPager.setAdapter(mAdapter);
 		viewPager.setOnPageChangeListener(this);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		View v = LayoutInflater.from(this).inflate(R.layout.action_bar_categories, null);
+		View v = LayoutInflater.from(this).inflate(
+				R.layout.action_bar_categories, null);
 		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setDisplayShowCustomEnabled(true);
 		actionBar.setDisplayHomeAsUpEnabled(false);
 		actionBar.setCustomView(v);
 		// Adding Tabs
-				for (String tab_name : tabs) {
-					actionBar.addTab(actionBar.newTab().setText(tab_name)
-							.setTabListener(this));
-				}
-				viewPager.setCurrentItem(1);
+		for (String tab_name : tabs) {
+			actionBar.addTab(actionBar.newTab().setText(tab_name)
+					.setTabListener(this));
+		}
+		viewPager.setCurrentItem(1);
 	}
-	
-	
+
 	private void initControls() {
-		/*categoryList = (ListView) findViewById(R.id.lv_categories);
-		categoryList.setOnItemClickListener(this);*/
+		
 		tv_Category_title = (TextView) findViewById(R.id.tv_title);
 		tv_Category_title
 				.setTypeface(GetTypeFace(FontHelper.CATEGORY_TITLE_FONTSTYLE));
@@ -131,16 +131,12 @@ public class UserCategoriesActivity extends BaseFragmentActivity implements
 		iv_select_confirm.setOnClickListener(this);
 		iv_cancel = (ImageView) findViewById(R.id.iv_cancel);
 		iv_cancel.setOnClickListener(this);
-		tv_edit = (TextView)findViewById(R.id.tv_edit);
+		tv_edit = (TextView) findViewById(R.id.tv_edit);
 		tv_edit.setOnClickListener(this);
-		iv_DeleteCategory =(ImageView)findViewById(R.id.iv_DeleteCategory);
+		iv_DeleteCategory = (ImageView) findViewById(R.id.iv_DeleteCategory);
 		iv_DeleteCategory.setOnClickListener(this);
-		/*btn_edit = (Button) findViewById(R.id.btn_edit);
-		btn_edit.setOnClickListener(this);*/
-
+		
 	}
-
-	
 
 	private void Hide_Layer1() {
 
@@ -160,69 +156,37 @@ public class UserCategoriesActivity extends BaseFragmentActivity implements
 	@Override
 	public void onClick(View v) {
 
-		if (v.getId() == tv_edit.getId() ) {
+		if (v.getId() == tv_edit.getId()) {
 			Hide_Layer1();
 			mAdapter.onEditStatePressed();
-			Toast.makeText(_ctx, "Edit Pressed", Toast.LENGTH_LONG).show();
-			
+			// Toast.makeText(_ctx, "Edit Pressed", Toast.LENGTH_LONG).show();
+
 		} else if (v.getId() == iv_select_confirm.getId()) {
-			 mAdapter.onConfirmPressed();
-			//postUserCats();
+			mAdapter.onConfirmPressed();
+			// postUserCats();
 		} else if (v.getId() == iv_cancel.getId()) {
-			CategoryPagerAdaptor.IsConfirmDeletePressed= false;
+			CategoryPagerAdaptor.IsConfirmDeletePressed = false;
 			Hide_Layer2();
 			mAdapter.onCanCelPressed();
-			
-		}
-		else if(v.getId()== iv_logout.getId()){
-			 SessionManager.setUserBo(null);
-			 Intent i = new Intent(UserCategoriesActivity.this, MainActivity.class);
-			 startActivity(i);
-		}
-		else if(v.getId() == iv_back.getId()){
-                UserCategoriesActivity.this.finish();
-		}
-		else if(v.getId() == iv_DeleteCategory.getId()){
+
+		} else if (v.getId() == iv_logout.getId()) {
+			SessionManager.setUserBo(null);
+			Intent i = new Intent(UserCategoriesActivity.this,
+					MainActivity.class);
+			startActivity(i);
+		} else if (v.getId() == iv_back.getId()) {
+			IsEditPresed=false;
+			UserCategoriesActivity.this.finish();
+		} else if (v.getId() == iv_DeleteCategory.getId()) {
 			Hide_Layer1();
-			CategoryPagerAdaptor.IsConfirmDeletePressed= true;
+			CategoryPagerAdaptor.IsConfirmDeletePressed = true;
 			mAdapter.onDeletePressed();
 		}
 
 	}
 
-	/*private void postUserCats() {
-		int length = checkBxState.length;
-		CatsSelected = new ArrayList<CategoryBo>();
-		if (IsCheckBoxChecked) {
-			for (int i = 0; i < length; i++) {
-				if (checkBxState[i]) {
-					CategoryBo category = (CategoryBo) categoryList
-							.getItemAtPosition(i);
-					CatsSelected.add(category);
-
-				}
-
-			}
-			UserBo sessionedUser = (UserBo) SessionManager.getUserBo();
-			UserBo user = new UserBo();
-			user.set_userId(sessionedUser.get_userId());
-			user.setUserCategories(CatsSelected);
-			UserAsynctask userAsynctask = new UserAsynctask(
-					UserCategoriesActivity.this, dbAdapter,
-					UserCategoriesActivity.this);
-			userAsynctask.executePostUserCategories(user);
-		} else {
-			Toast.makeText(UserCategoriesActivity.this, "No Item was Selected",
-					Toast.LENGTH_SHORT).show();
-		}
-		Hide_Layer2();
-	}*/
-
-
-	
 	public void onPostSuccess() {
-		IsEditPresed= false;
-		
+		IsEditPresed = false;
 
 	}
 
@@ -233,13 +197,13 @@ public class UserCategoriesActivity extends BaseFragmentActivity implements
 	@Override
 	public void onPageScrollStateChanged(int arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPageScrolled(int arg0, float arg1, int arg2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -252,7 +216,7 @@ public class UserCategoriesActivity extends BaseFragmentActivity implements
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -261,23 +225,24 @@ public class UserCategoriesActivity extends BaseFragmentActivity implements
 		viewPager.setCurrentItem(tab.getPosition());
 		if (tab.getPosition() == 1 && MyCategoriesFragment.DataChanged) {
 
-            LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
-            Intent i = new Intent("TAG_REFRESH");
-            lbm.sendBroadcast(i);
+			LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
+			Intent i = new Intent("TAG_REFRESH");
+			lbm.sendBroadcast(i);
 
-        }
-		else if ((tab.getPosition() ==0) && OtherCategoriesFragment.IsDataChanged){
-			 LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
-	            Intent i = new Intent("TAG_REFRESH_Other");
-	            lbm.sendBroadcast(i);
+		} else if ((tab.getPosition() == 0)
+				&& OtherCategoriesFragment.IsDataChanged) {
+
+			LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
+			Intent i = new Intent("TAG_REFRESH_Other");
+			lbm.sendBroadcast(i);
 		}
-		
+
 	}
 
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

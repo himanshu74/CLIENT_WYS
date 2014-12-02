@@ -14,6 +14,7 @@ import wys.Modals.TopicModal;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class UserAsynctask extends BaseAsyncTaskManager {
 
@@ -64,12 +65,14 @@ public class UserAsynctask extends BaseAsyncTaskManager {
 		new PostCategories().execute(user);
 	}
 
-	public void executePostJoinTopic(UserBo user)
-	{
+	public void executePostJoinTopic(UserBo user) {
 		new PostJoinTopic().execute(user);
 	}
-	
-	
+
+	public void executeUpdateUser(UserBo user)
+	{
+		new UpdateProfile().execute(user);
+	}
 	private class PostCategories extends AsyncTask<UserBo, Void, Integer> {
 
 		@Override
@@ -212,6 +215,46 @@ public class UserAsynctask extends BaseAsyncTaskManager {
 			} else {
 				if (_onOnResponseReceived != null) {
 					_onOnResponseReceived.onResponseFailure();
+				}
+				Toast.makeText(_ctx, "OOPS !! SERVER NOT RESPONDING",
+						Toast.LENGTH_LONG).show();
+			}
+			super.onPostExecute(result);
+		}
+
+	}
+
+	private class UpdateProfile extends AsyncTask<UserBo, Void, Integer> {
+		
+		@Override
+		protected void onPreExecute() {
+			progressDialog = new ProgressDialog(_ctx);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setMessage("Updating Profile...");
+			progressDialog.setCancelable(false);
+			progressDialog.setIndeterminate(false);
+			progressDialog.show();
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Integer doInBackground(UserBo... params) {
+			
+			int status = new WysUserApi().updateUser(params[0]);
+			return status;
+		}
+
+		@Override
+		protected void onPostExecute(Integer result) {
+			progressDialog.dismiss();
+			if(result == SUCCESS){
+				if(get_onOnResponseReceived() !=null){
+					get_onOnResponseReceived().onResponseSuccess();
+				}
+				
+			}else if(result == ERROR){
+				if(get_onOnResponseReceived() !=null){
+					get_onOnResponseReceived().onResponseFailure();
 				}
 			}
 			super.onPostExecute(result);

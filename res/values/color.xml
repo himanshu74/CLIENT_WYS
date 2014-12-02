@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <color name="darkblue">#052162</color>
+
+    <color name="darkblue">#052162</color>
+    <color name="myred">#F22B00</color>
+    <color name="list_blue">#178EC9</color>
+    <color name="list_grey">#71A0C1</color>
+
 </resources>

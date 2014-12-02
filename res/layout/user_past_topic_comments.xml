@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/rel_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#B9B2B2"
+        android:paddingBottom="7dp"
+        android:paddingTop="7dp" >
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/back_btn_selector"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/tv_topic_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Topic Name"
+            android:textColor="@color/darkblue"
+            android:textSize="20sp"
+            android:textStyle="normal" />
+
+        <ImageView
+            android:id="@+id/btn_addnew_Item"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/blueadd"
+            android:scaleType="fitXY"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rel_header"
+        android:layout_marginTop="20dp" >
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dp"
+            android:text="Comments :"
+            android:textSize="18sp"
+            android:textStyle="italic" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_comment_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rel_title"
+        android:paddingBottom="30dp"
+        android:paddingTop="5dp" >
+
+        <ListView
+            android:id="@+id/lv_user_Past_comments"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:divider="@null"
+            android:dividerHeight="6dp"
+            android:stackFromBottom="true"
+            android:transcriptMode="alwaysScroll" >
+        </ListView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_conclusion_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rel_comment_list"
+        android:layout_marginTop="10dp" >
+
+        <TextView
+            android:id="@+id/tv_conclusion_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Conclusion"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rel_conclusion"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rel_conclusion_title"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/signup_dialog_shape"
+        android:paddingBottom="10dp" >
+
+        <TextView
+            android:id="@+id/tv_conclusion"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:maxLines="100"
+            android:scrollbars="vertical" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -18,8 +18,15 @@ public class UserBo extends BaseBusiness {
 	private String _token;
 	private ArrayList<CategoryBo> userCategories;
 	private ArrayList<TopicBo> userTopics;
+	private String regId;
 
 	
+	public String getRegId() {
+		return regId;
+	}
+	public void setRegId(String regId) {
+		this.regId = regId;
+	}
 	public ArrayList<TopicBo> getUserTopics() {
 		return userTopics;
 	}

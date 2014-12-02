@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="9dp"
+    android:paddingTop="9dp">
+    		<TextView
+	            android:id="@+id/tv_username"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Sagar:"
+	            android:textColor="@color/darkblue"
+	            android:layout_alignParentLeft="true"
+	            android:textSize="22sp" />
+	
+	        <TextView
+	            android:id="@+id/tv_comment"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:layout_toRightOf="@+id/tv_username"
+	            android:text="It has very good GUI...helloooo"
+	            android:textColor="@color/darkblue"
+	            android:textSize="22sp" 
+	            android:layout_marginLeft="20dp"/>
+    
+
+</RelativeLayout>

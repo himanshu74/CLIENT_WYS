@@ -87,15 +87,19 @@ public class CategoryTask extends BaseAsyncTaskManager {
 		protected ArrayList<BaseBusiness> doInBackground(Void... params) {
 			boolean status = false;
 
-			ArrayList<BaseBusiness> ArrayList = new WysApi().GetCategories();
-			for (BaseBusiness category : ArrayList) {
-				status = CategoryModal.saveCategory(dbAdapter.getDb(),
-						(CategoryBo) category);
-			}
-			if (status) {
-				return ArrayList;
-			} else {
+			ArrayList<BaseBusiness> cats = new WysApi().GetCategories();
+			if (cats == null) {
 				return null;
+			} else {
+				for (BaseBusiness category : cats) {
+					status = CategoryModal.saveCategory(dbAdapter.getDb(),
+							(CategoryBo) category);
+				}
+				if (status) {
+					return cats;
+				} else {
+					return null;
+				}
 			}
 
 		}
@@ -109,7 +113,7 @@ public class CategoryTask extends BaseAsyncTaskManager {
 					_onCategoriesListener.OnCategoriesReceived(result);
 				}
 			} else {
-				Toast.makeText(_ctx, "Error saving cats in local db",
+				Toast.makeText(_ctx, "OOPS !! SERVER NOT RESPONDING",
 						Toast.LENGTH_LONG).show();
 			}
 
@@ -141,9 +145,11 @@ public class CategoryTask extends BaseAsyncTaskManager {
 			if (result != null) {
 				if (getOnGetUserCategoryListener() != null) {
 					getOnGetUserCategoryListener().onUserCategoryReceived();
-				} else {
-					getOnGetUserCategoryListener().onUserCategoryNotReceived();
 				}
+			} else {
+				getOnGetUserCategoryListener().onUserCategoryNotReceived();
+				Toast.makeText(_ctx, "OOPS !! SERVER NOT RESPONDING",
+						Toast.LENGTH_LONG).show();
 			}
 			super.onPostExecute(result);
 		}
@@ -179,6 +185,8 @@ public class CategoryTask extends BaseAsyncTaskManager {
 
 				if (getOnGetRemainCatListener() != null) {
 					getOnGetRemainCatListener().onRemainCatNotReceived();
+					Toast.makeText(_ctx, "OOPS !! SERVER NOT RESPONDING",
+							Toast.LENGTH_LONG).show();
 				}
 			}
 

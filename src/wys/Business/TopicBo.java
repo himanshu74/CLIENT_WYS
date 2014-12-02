@@ -17,6 +17,16 @@ public class TopicBo extends BaseBusiness implements Serializable {
 	private Date _beginDateUTC;
 	private long _bgeindateUnixUTC;
 	private String _beginDateString;
+	private int isSubScribedNotActive;
+	
+	public int isSubScribedNotActive() {
+		return isSubScribedNotActive;
+	}
+
+	public void setSubScribedNotActive(int isSubScribedNotActive) {
+		this.isSubScribedNotActive = isSubScribedNotActive;
+	}
+
 	public String get_beginDateString() {
 		return _beginDateString;
 	}

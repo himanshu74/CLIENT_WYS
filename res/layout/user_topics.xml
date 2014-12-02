@@ -34,7 +34,6 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/btn_delete_selector"
-                android:onClick="DeleteCategory"
                 android:scaleType="fitXY" />
 
             <ImageView
@@ -68,7 +67,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/crosswhite"
-                android:onClick="CancelDelete"
                 android:visibility="gone" />
         </LinearLayout>
     </RelativeLayout>

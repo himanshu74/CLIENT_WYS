@@ -19,6 +19,7 @@ import wys.Business.BaseBusiness;
 import wys.Business.CategoryBo;
 import wys.CustomInterfaces.OnGetCategoriesListener;
 import wys.DatabaseHelpers.DBAdapter;
+import wys.Dialogs.SearchDialogActivity;
 import wys.ForumObjects.CategoryListActivity;
 import wys.ForumObjects.UserCategoriesActivity;
 import wys.FrontLayer.MainActivity;
@@ -29,7 +30,7 @@ public class UserHomeActivity extends BaseDbActivity implements
 		OnClickListener, OnGetCategoriesListener {
 
 	private ImageView iv_logout;
-	private Button btn_cats;
+	private Button btn_cats,btn_profile, btn_search;
 	private Context _ctx = UserHomeActivity.this;
 
 	@Override
@@ -42,19 +43,23 @@ public class UserHomeActivity extends BaseDbActivity implements
 	}
 
 	private void InitControls() {
-		 iv_logout = (ImageView) findViewById(R.id.iv_logout);
-		 iv_logout.setOnClickListener(this);
+		iv_logout = (ImageView) findViewById(R.id.iv_logout);
+		iv_logout.setOnClickListener(this);
 		btn_cats = (Button) findViewById(R.id.btn_cat);
 		btn_cats.setOnClickListener(this);
+		btn_profile =(Button)findViewById(R.id.btn_profile);
+		btn_profile.setOnClickListener(this);
+		btn_search=(Button)findViewById(R.id.btn_search);
+		btn_search.setOnClickListener(this);
+		
 	}
 
-	
-	/// Here on Category Click button i am checking if the user is Opening Categories for the first time 
-	//  if yes then I make the call to the server to fetch all the categories. 
-	// Then store them inside the Local db. and then render them on the view. 
+	// / Here on Category Click button i am checking if the user is Opening
+	// Categories for the first time
+	// if yes then I make the call to the server to fetch all the categories.
+	// Then store them inside the Local db. and then render them on the view.
 	// After that i update the Preferences and set isFIrstTime false;
-	
-	
+
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == iv_logout.getId()) {
@@ -68,7 +73,7 @@ public class UserHomeActivity extends BaseDbActivity implements
 						UserHomeActivity.this, dbAdapter);
 				cattask.ExecuteGetCategories();
 
-			} else {
+			} else{
 				ArrayList<CategoryBo> clist = CategoryHelper
 						.getCategories(dbAdapter);
 				Intent i = new Intent(UserHomeActivity.this,
@@ -76,7 +81,17 @@ public class UserHomeActivity extends BaseDbActivity implements
 				i.putExtra("list", clist);
 				startActivity(i);
 			}
+			
 
+		}else if(v.getId()== btn_profile.getId()){
+			Intent i = new Intent(_ctx,ProfileActivity.class);
+			startActivity(i);
+		}
+		
+		else if(v.getId() == btn_search.getId()){
+			SearchDialogActivity dialogActivity = new SearchDialogActivity(_ctx, dbAdapter);
+			dialogActivity.setCanceledOnTouchOutside(false);
+			dialogActivity.show();
 		}
 
 	}
@@ -85,7 +100,8 @@ public class UserHomeActivity extends BaseDbActivity implements
 	public void OnCategoriesReceived(ArrayList<BaseBusiness> list) {
 		getWYSPreferences().set_firstTimeUse(false);
 		ArrayList<CategoryBo> clist = CategoryHelper.getCategories(dbAdapter);
-		Intent i = new Intent(UserHomeActivity.this, UserCategoriesActivity.class);
+		Intent i = new Intent(UserHomeActivity.this,
+				UserCategoriesActivity.class);
 		i.putExtra("list", clist);
 		startActivity(i);
 

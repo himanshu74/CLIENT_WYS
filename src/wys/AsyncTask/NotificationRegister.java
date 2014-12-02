@@ -36,8 +36,9 @@ public class NotificationRegister {
 			}
 
 			new WysApi().doRegisterGcm(regId);
-
 			return null;
+
+		
 		}
 	}
 

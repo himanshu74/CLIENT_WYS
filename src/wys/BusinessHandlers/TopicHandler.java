@@ -65,6 +65,7 @@ public class TopicHandler extends Jsonhandler {
 		topicBo.set_domainId(json.getInt("DomainId"));
 		topicBo.set_name(json.getString("Name"));
 		topicBo.set_userId(json.getInt("UserId"));
+		topicBo.setSubScribedNotActive(json.getInt("IsActiveYet"));
 		topicBo.set_conclusion(json.getString("Conclusion"));
 		topicBo.set_isActive(json.getInt("IsActive"));
 		topicBo.set_isServed(json.getInt("IsServed"));
@@ -81,5 +82,6 @@ public class TopicHandler extends Jsonhandler {
 		Date date = sdf.parse(jsondate);
 		return date;
 	}
+
 
 }

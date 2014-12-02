@@ -78,7 +78,7 @@
             android:background="@drawable/blue_theme_button_selector"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="Resend Code"
+            android:text="Resend"
             android:textColor="#FFFFFF" />
     </RelativeLayout>
 

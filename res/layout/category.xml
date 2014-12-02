@@ -27,7 +27,6 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:background="@drawable/back_btn_selector"
-            android:onClick="BackToItemsList"
             android:scaleType="fitXY" />
 
         <TextView

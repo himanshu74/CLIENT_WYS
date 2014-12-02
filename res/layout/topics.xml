@@ -36,7 +36,6 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/btn_delete_selector"
-                android:onClick="DeleteItem"
                 android:scaleType="fitXY" />
 
             <ImageView
@@ -62,7 +61,6 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/btn_logout_selector"
-                android:onClick="Logout"
                 android:scaleType="fitXY" />
 
             <ImageView
@@ -93,7 +91,6 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:background="@drawable/blue_theme_button_selector"
-            android:onClick="ConfirmDelete"
             android:text="Delete"
             android:textColor="#FFFFFF" />
 

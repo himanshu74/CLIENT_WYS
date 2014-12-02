@@ -4,9 +4,9 @@ import wys.DatabaseHelpers.DBAdapter;
 import wys.Fragments.CurrentTopicFragment;
 import wys.Fragments.PastTopicFragment;
 import wys.Fragments.UpcomingTopicFragment;
-import wys.Users.Fragments.UserMyTopicFragment;
-import wys.Users.Fragments.UserPastTopicFragment;
-import wys.Users.Fragments.UserUpcomingTopicFragment;
+import wys.Users.Topics.Fragments.UserMyTopicFragment;
+import wys.Users.Topics.Fragments.UserPastTopicFragment;
+import wys.Users.Topics.Fragments.UserUpcomingTopicFragment;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,13 +37,13 @@ public class UserTopicPagerAdapter extends FragmentPagerAdapter {
 		switch (index) {
 		case 0: {
 
-			return new UserPastTopicFragment(_ctx, _dbAdapter);
+			return new UserPastTopicFragment(_ctx, _dbAdapter,_catId);
 
 		}
 
 		case 1: {
 
-			return new UserMyTopicFragment(_ctx, _dbAdapter);
+			return new UserMyTopicFragment(_ctx, _dbAdapter,_catId);
 		}
 
 		case 2:

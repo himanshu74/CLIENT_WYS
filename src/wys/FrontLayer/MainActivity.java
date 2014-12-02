@@ -27,6 +27,12 @@ public class MainActivity extends BaseDbActivity implements OnClickListener {
 
 	}
 
+	@Override
+	public void onBackPressed() {
+
+		// super.onBackPressed();
+	}
+
 	private void initControls() {
 
 		btn_SignIn = (Button) findViewById(R.id.btn_signin);

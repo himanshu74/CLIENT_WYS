@@ -22,10 +22,12 @@ import wys.Adapter.UserTopicPagerAdapter;
 import wys.Adapter.UserUpcomingTopicsListAdaptor;
 import wys.Api.SessionManager;
 import wys.Base.BaseFragmentActivity;
+import wys.Dialogs.SearchDialogActivity;
 import wys.FrontLayer.MainActivity;
 import wys.Helpers.FontHelper;
 import wys.Helpers.WysConstants;
-import wys.Users.Fragments.UserMyTopicFragment;
+import wys.User.SearchedTopicsActivity;
+import wys.Users.Topics.Fragments.UserMyTopicFragment;
 
 public class UserTopicsActivity extends BaseFragmentActivity implements
 		OnPageChangeListener, TabListener, OnClickListener {
@@ -39,7 +41,7 @@ public class UserTopicsActivity extends BaseFragmentActivity implements
 
 	private TextView tv_topic_title, tv_edit;
 	private ImageView iv_back;
-	private static ImageView iv_logout;
+	private static ImageView iv_logout, iv_search;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -59,6 +61,8 @@ public class UserTopicsActivity extends BaseFragmentActivity implements
 		iv_back.setOnClickListener(this);
 		iv_logout = (ImageView) findViewById(R.id.iv_logout);
 		iv_logout.setOnClickListener(this);
+		iv_search = (ImageView) findViewById(R.id.iv_search);
+		iv_search.setOnClickListener(this);
 	}
 
 	private void initTabControls() {
@@ -101,8 +105,6 @@ public class UserTopicsActivity extends BaseFragmentActivity implements
 			lbm.sendBroadcast(i);
 		}
 
-		
-
 	}
 
 	@Override
@@ -137,6 +139,11 @@ public class UserTopicsActivity extends BaseFragmentActivity implements
 			startActivity(i);
 		} else if (v.getId() == iv_back.getId()) {
 			UserTopicsActivity.this.finish();
+		} else if (v.getId() == iv_search.getId()) {
+		
+              SearchDialogActivity searchDialogActivity = new SearchDialogActivity(_ctx, dbAdapter);
+              searchDialogActivity.setCanceledOnTouchOutside(false);
+              searchDialogActivity.show();
 		}
 
 	}

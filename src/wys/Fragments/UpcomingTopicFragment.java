@@ -22,13 +22,14 @@ public class UpcomingTopicFragment extends Fragment {
 
 	private Context _ctx;
 	private DBAdapter _dbadapter;
-	private int _catId;
+	public static int _catId;
 	private ListView topicsListView;
+	public static ArrayList<TopicBo> orgUpcomingList;
 
 	public UpcomingTopicFragment(Context context, DBAdapter dbAdapter, int catId) {
 		this._dbadapter = dbAdapter;
 		this._ctx = context;
-		this._catId = catId;
+		//this._catId = catId;
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class UpcomingTopicFragment extends Fragment {
 		View view = inflater.inflate(R.layout.past_topics, container, false);
 		topicsListView = (ListView) view.findViewById(R.id.lv_topics);
 
-		TopicAdapter topicAdapter = new TopicAdapter(_ctx, getUpcomingTopics());
+		TopicAdapter topicAdapter = new TopicAdapter(_ctx, orgUpcomingList);
 
 		topicsListView.setAdapter(topicAdapter);
 		return view;
@@ -48,12 +49,25 @@ public class UpcomingTopicFragment extends Fragment {
 		return TopicHelper.getUpComingTopicsByCatId(_dbadapter, _catId);
 	}
 
+	private void refreshData() {
+		TopicAdapter topicAdapter = new TopicAdapter(_ctx, orgUpcomingList);
+
+		topicsListView.setAdapter(topicAdapter);
+	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
-		TopicAdapter topicAdapter = new TopicAdapter(_ctx, getUpcomingTopics());
+		if (orgUpcomingList != null) {
+			refreshData();
+		}
 
-		topicsListView.setAdapter(topicAdapter);
+		/*
+		 * TopicAdapter topicAdapter = new TopicAdapter(_ctx,
+		 * getUpcomingTopics());
+		 * 
+		 * topicsListView.setAdapter(topicAdapter);
+		 */
 	}
 
 }

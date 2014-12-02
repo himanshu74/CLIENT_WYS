@@ -8,6 +8,7 @@ import java.util.List;
 
 import wys.Api.SessionManager;
 import wys.Api.WysApi;
+import wys.Api.WysUserApi;
 import wys.Background.GcmMessageHandler;
 import wys.Business.BaseBusiness;
 import wys.Business.TopicBo;
@@ -21,6 +22,7 @@ import wys.Modals.TopicModal;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class Topictask extends BaseAsyncTaskManager {
 
@@ -66,6 +68,10 @@ public class Topictask extends BaseAsyncTaskManager {
 		new FetchAllTopicsAsync().execute();
 	}
 
+	public void executeGetAllTopicsByKeyword(String key){
+		new FetchTopicsByKeyword().execute(key);
+	}
+	
 	public void executePostTopics(String topic, String keyword, int domainid,
 			long dateUnixUTC) throws ParseException {
 		TopicBo topicBo = new TopicBo();
@@ -75,11 +81,15 @@ public class Topictask extends BaseAsyncTaskManager {
 		topicBo.set_domainId(domainid);
 		topicBo.set_userId(user.get_userId());
 		topicBo.set_bgeindateUnixUTC(dateUnixUTC);
+		topicBo.set_beginDateString(WysDateConversioHelper
+				.getStringFormatedBeginDate(dateUnixUTC));
+		topicBo.set_endDateString(WysDateConversioHelper
+				.getStringFormatedEndDate(dateUnixUTC));
 		new TopicPostAsync().execute(topicBo);
 	}
 
 	private class TopicAsync extends
-			AsyncTask<Integer, Void, ArrayList<BaseBusiness>> {
+			AsyncTask<Integer, Void, ArrayList<TopicBo>> {
 
 		@Override
 		protected void onPreExecute() {
@@ -93,23 +103,25 @@ public class Topictask extends BaseAsyncTaskManager {
 		}
 
 		@Override
-		protected ArrayList<BaseBusiness> doInBackground(Integer... params) {
+		protected ArrayList<TopicBo> doInBackground(Integer... params) {
 
-			ArrayList<BaseBusiness> list = new WysApi().getTopics(params[0]);
+			ArrayList<TopicBo> list = new WysApi().getTopics(params[0]);
 
 			return list;
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<BaseBusiness> result) {
+		protected void onPostExecute(ArrayList<TopicBo> result) {
 			progressDialog.dismiss();
 			if (result != null) {
 				if (onGetTopicsListener != null) {
-					onGetTopicsListener.onTopicsReceived();
+					onGetTopicsListener.onTopicsReceived(result);
 				}
 			} else {
 				if (onGetTopicsListener != null) {
 					onGetTopicsListener.onTopicsNotReceived();
+					Toast.makeText(_ctx, "OOPS !! SERVER NOT RESPONDING",
+							Toast.LENGTH_LONG).show();
 				}
 			}
 
@@ -137,10 +149,6 @@ public class Topictask extends BaseAsyncTaskManager {
 			int InsertedServerId = new WysApi().PostTopic(params[0]);
 			if (InsertedServerId != -1) {
 				params[0].set_serverId(InsertedServerId);
-				params[0]
-						.set_beginDateString(WysDateConversioHelper
-								.getStringFormatedDate(params[0]
-										.get_bgeindateUnixUTC()));
 				boolean result = TopicModal.saveTopic(getDbAdapter().getDb(),
 						params[0]);
 				if (result) {
@@ -158,8 +166,8 @@ public class Topictask extends BaseAsyncTaskManager {
 		protected void onPostExecute(Integer result) {
 			progressDialog.dismiss();
 			if (result == SUCCESS) {
-				GcmMessageHandler.generateNotification(
-						_ctx.getApplicationContext(), "New Topic Posted");
+				// GcmMessageHandler.generateNotification(
+				// _ctx.getApplicationContext(), "New Topic Posted");
 				if (listener != null) {
 					listener.onTopicPosted();
 				}
@@ -215,7 +223,7 @@ public class Topictask extends BaseAsyncTaskManager {
 			progressDialog.dismiss();
 			if (result == SUCCESS) {
 				if (onGetTopicsListener != null) {
-					onGetTopicsListener.onTopicsReceived();
+					// onGetTopicsListener.onTopicsReceived();
 				}
 			} else if (result == ERROR) {
 				if (onGetTopicsListener != null) {
@@ -227,8 +235,50 @@ public class Topictask extends BaseAsyncTaskManager {
 			else if (result == EMPTY_SERVER_RECORD) {
 				if (onGetTopicsListener != null) {
 					onGetTopicsListener.onEmptyServerRecord();
+					Toast.makeText(_ctx, "OOPS !! SERVER NOT RESPONDING",
+							Toast.LENGTH_LONG).show();
 				}
 			}
+			super.onPostExecute(result);
+		}
+
+	}
+
+	private class FetchTopicsByKeyword extends
+			AsyncTask<String, Void, ArrayList<TopicBo>> {
+
+		@Override
+		protected void onPreExecute() {
+			progressDialog = new ProgressDialog(_ctx);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setMessage("Searching...");
+			progressDialog.setCancelable(false);
+			progressDialog.setIndeterminate(false);
+			progressDialog.show();
+			super.onPreExecute();
+		}
+		
+		
+		@Override
+		protected ArrayList<TopicBo> doInBackground(String... params) {
+			
+			ArrayList<TopicBo> list = new WysUserApi().getTopicsbyKeyword(params[0]);
+			return list;
+		}
+		
+		@Override
+		protected void onPostExecute(ArrayList<TopicBo> result) {
+			
+			if(result !=null)
+			{
+				if(onGetTopicsListener!=null){
+					onGetTopicsListener.onTopicsReceived(result);
+				}
+			}
+			else if(onGetTopicsListener!=null){
+				onGetTopicsListener.onTopicsNotReceived();
+			}
+				
 			super.onPostExecute(result);
 		}
 

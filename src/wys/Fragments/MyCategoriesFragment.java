@@ -21,6 +21,9 @@ import wys.ForumObjects.UserCategoriesActivity;
 import wys.ForumObjects.UserTopicsActivity;
 import wys.Helpers.CategoryHelper;
 import wys.Helpers.WysConstants;
+import wys.Users.Topics.Fragments.UserMyTopicFragment;
+import wys.Users.Topics.Fragments.UserPastTopicFragment;
+import wys.Users.Topics.Fragments.UserUpcomingTopicFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +41,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class MyCategoriesFragment extends BaseFragment implements Serializable,
-		OnResponseReceived, OnItemClickListener,OnGetTopicsListener {
+		OnResponseReceived, OnItemClickListener {
 
 	private ListView _myCatsList;
 	private Context _ctx;
@@ -52,7 +55,7 @@ public class MyCategoriesFragment extends BaseFragment implements Serializable,
 	public static final String TOPIC_RECEIVER_FLAG = "topic_flag";
 
 	ArrayList<CategoryBo> CatsSelected;
-	MyReceiver r;
+	MyReceiver receiver;
 
 	private UserTopicReceiver _topicReceiver;
 
@@ -95,14 +98,14 @@ public class MyCategoriesFragment extends BaseFragment implements Serializable,
 	@Override
 	public void onPause() {
 		super.onPause();
-		LocalBroadcastManager.getInstance(_ctx).unregisterReceiver(r);
+		LocalBroadcastManager.getInstance(_ctx).unregisterReceiver(receiver);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		r = new MyReceiver();
-		LocalBroadcastManager.getInstance(_ctx).registerReceiver(r,
+		receiver = new MyReceiver();
+		LocalBroadcastManager.getInstance(_ctx).registerReceiver(receiver,
 				new IntentFilter("TAG_REFRESH"));
 
 	}
@@ -179,34 +182,40 @@ public class MyCategoriesFragment extends BaseFragment implements Serializable,
 	public void onItemClick(AdapterView<?> parent, View arg1, int position,
 			long arg3) {
 		categoryClicked = (CategoryBo) parent.getItemAtPosition(position);
-		if (getWYSPreferences().isUserTopicExistLocal()) {
-			Intent i = new Intent(_ctx, UserTopicsActivity.class);
-			i.putExtra("catid", categoryClicked.get_serverId());
-			startActivity(i);
-		} else {
-			/*Intent i = new Intent(_ctx, UserTopicGetService.class);
-			i.putExtra("catid", categoryClicked.get_serverId());
-			UserTopicGetService._dbAdapter = this._dbAdapter;
-			_ctx.startService(i);*/
-			
-			FetchAllTopicsFromServer();
-			
-		}
-		Toast.makeText(_ctx, "Item Clicked", Toast.LENGTH_LONG).show();
-	}
-	
-	private void FetchAllTopicsFromServer(){
-		Topictask topicTask = new Topictask(_ctx, this, _dbAdapter);
-		topicTask.executeGetAllTopics();
-		
+		/*
+		 * if (getWYSPreferences().isUserTopicExistLocal()) { Intent i = new
+		 * Intent(_ctx, UserTopicsActivity.class); i.putExtra("catid",
+		 * categoryClicked.get_serverId()); startActivity(i);
+		 */
+         _myCatsList.setClickable(false);
+         UserMyTopicFragment._catId = categoryClicked.get_serverId();
+         UserPastTopicFragment._catId =categoryClicked.get_serverId();
+         UserUpcomingTopicFragment._catId = categoryClicked.get_serverId();
+		Intent i = new Intent(_ctx, UserTopicGetService.class);
+		i.putExtra("catid", categoryClicked.get_serverId());
+		UserTopicGetService._dbAdapter = this._dbAdapter;
+		_ctx.startService(i);
 	}
 
-	private class UserTopicReceiver extends BroadcastReceiver  {
+	// FetchAllTopicsFromServer();
+	/*
+	 * Toast.makeText(_ctx, "Item Clicked", Toast.LENGTH_LONG).show();
+	 * 
+	 * Intent i = new Intent(_ctx, UserTopicsActivity.class);
+	 * i.putExtra("catid", categoryClicked.get_serverId()); startActivity(i);
+	 */
+
+	/*
+	 * private void FetchAllTopicsFromServer(){ Topictask topicTask = new
+	 * Topictask(_ctx, this, _dbAdapter); topicTask.executeGetAllTopics();
+	 */
+
+	private class UserTopicReceiver extends BroadcastReceiver {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if ((intent.getIntExtra(UserTopicGetService.RESPONSE_TAG, -1) == WysConstants.RECEIVED_USER_TOPICS)) {
-				getWYSPreferences().setUserTopicExistLocal(true);
+				_myCatsList.setClickable(true);
 				int catId = intent.getIntExtra("catid", -1);
 				Intent i = new Intent(_ctx, UserTopicsActivity.class);
 				i.putExtra("catid", catId);
@@ -219,29 +228,24 @@ public class MyCategoriesFragment extends BaseFragment implements Serializable,
 		}
 
 	}
-	
-	
-	////// ON GetTopicsLIstener Implemented Methods
-	
 
-	@Override
-	public void onTopicsReceived() {
-		getWYSPreferences().setUserTopicExistLocal(true);
-		Intent i = new Intent(_ctx, UserTopicsActivity.class);
-		i.putExtra("catid", categoryClicked.get_serverId());
-		startActivity(i);
-	}
+	// //// ON GetTopicsLIstener Implemented Methods
 
-	@Override
-	public void onTopicsNotReceived() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onEmptyServerRecord() {
-		// TODO Auto-generated method stub
-		
-	}
+	/*
+	 * @Override public void onTopicsReceived() {
+	 * getWYSPreferences().setUserTopicExistLocal(true); Intent i = new
+	 * Intent(_ctx, UserTopicsActivity.class); i.putExtra("catid",
+	 * categoryClicked.get_serverId()); startActivity(i); }
+	 * 
+	 * @Override public void onTopicsNotReceived() { // TODO Auto-generated
+	 * method stub
+	 * 
+	 * }
+	 * 
+	 * @Override public void onEmptyServerRecord() { // TODO Auto-generated
+	 * method stub
+	 * 
+	 * }
+	 */
 
 }

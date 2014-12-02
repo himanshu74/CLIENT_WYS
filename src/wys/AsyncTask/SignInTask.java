@@ -14,6 +14,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class SignInTask extends BaseAsyncTaskManager {
 
@@ -37,10 +38,10 @@ public class SignInTask extends BaseAsyncTaskManager {
 		this._ctx = ctx;
 	}
 
-	public SignInTask(){
-		
+	public SignInTask() {
+
 	}
-	
+
 	public void ExecuteSignIn() {
 		if (SessionManager.getUserBo() != null) {
 			UserBo user = (UserBo) SessionManager.getUserBo();
@@ -80,7 +81,7 @@ public class SignInTask extends BaseAsyncTaskManager {
 					_roleID = user.get_roleId();
 				}
 			} else {
-				result = ERROR;
+				return ERROR;
 			}
 
 			return result;
@@ -103,25 +104,6 @@ public class SignInTask extends BaseAsyncTaskManager {
 		protected void onPostExecute(Integer result) {
 			progressDialog.dismiss();
 
-			/*
-			 * if (!_isVerified && isDirectSIgnin) { if (_onSignInListener !=
-			 * null) { _onSignInListener.OnStillNotVerified(); } } else { if
-			 * (!_isVerified && result == ERROR && isDirectSIgnin) {
-			 * _onSignInListener.OnStillNotVerified(); } else if (isDirectSIgnin
-			 * && result == SUCCESS) {
-			 * 
-			 * if (_onSignInListener != null) {
-			 * _onSignInListener.OnSignInSuccess(); } } else if (isDirectSIgnin
-			 * && result == ERROR) { if (_onSignInListener != null) {
-			 * _onSignInListener.OnSignInFail(); }
-			 * 
-			 * } else if (!isDirectSIgnin && result == SUCCESS) { if
-			 * (_onSignInListener != null) {
-			 * _onSignInListener.OnSignInSuccess(); } } else if (!isDirectSIgnin
-			 * && result == ERROR) { if (_onSignInListener != null) {
-			 * _onSignInListener.OnSignInFail(); } } }
-			 */
-
 			if (result == SUCCESS) {
 				if (_isVerified) {
 					if (_roleID == USER_ROLE_ID && _onSignInListener != null) {
@@ -135,14 +117,17 @@ public class SignInTask extends BaseAsyncTaskManager {
 						_onSignInListener.OnStillNotVerified();
 					}
 				}
+			} else if (result == SERVER_ERROR) {
+				Toast.makeText(_ctx, "OOPS !! SERVER NOT RESPONDING",
+						Toast.LENGTH_SHORT).show();
 			} else if (result == ERROR) {
 				if (_onSignInListener != null) {
 					_onSignInListener.OnSignInFail();
 				}
+				super.onPostExecute(result);
 			}
-			super.onPostExecute(result);
-		}
 
+		}
 	}
 
 	private class ResetPassAsync extends AsyncTask<String, Void, Integer> {
@@ -158,7 +143,12 @@ public class SignInTask extends BaseAsyncTaskManager {
 			int status = -1;
 			ArrayList<BaseBusiness> users = new WysApi()
 					.doResetPassword(params[0]);
-			status = users.get(0).getStatus();
+			if (users != null) {
+				status = users.get(0).getStatus();
+			} else {
+				return SERVER_ERROR;
+			}
+
 			return status;
 		}
 
@@ -166,14 +156,17 @@ public class SignInTask extends BaseAsyncTaskManager {
 		protected void onPostExecute(Integer result) {
 			if (result == SUCCESS) {
 				if (getOnResetPassListener() != null) {
-                     getOnResetPassListener().onRestSuccess();
+					getOnResetPassListener().onRestSuccess();
 				}
 			}
 
 			else if (result == ERROR) {
 				if (getOnResetPassListener() != null) {
-                  getOnResetPassListener().onResetFail();
+					getOnResetPassListener().onResetFail();
 				}
+			} else if (result == SERVER_ERROR) {
+				Toast.makeText(_ctx, "OOPS !! SERVER NOT RESPONDING",
+						Toast.LENGTH_LONG).show();
 			}
 
 			super.onPostExecute(result);

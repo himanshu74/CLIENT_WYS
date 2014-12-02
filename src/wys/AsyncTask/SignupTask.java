@@ -1,7 +1,11 @@
 package wys.AsyncTask;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.wys.R;
 
 import wys.Api.WysApi;
 import wys.Business.BaseBusiness;
@@ -13,6 +17,7 @@ import wys.Helpers.WebRequest;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources.NotFoundException;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -50,10 +55,26 @@ public class SignupTask extends BaseAsyncTaskManager {
 		new CheckUserAsync().execute(username);
 	}
 
+	
 	private class PostAsync extends AsyncTask<UserBo, Void, Integer> {
 
 		@Override
 		protected Integer doInBackground(UserBo... params) {
+			GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(_ctx
+					.getApplicationContext());
+			String regId = null;
+			try {
+				regId = gcm.register(_ctx.getResources().getString(
+						R.string.sender_id));
+			} catch (NotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			if (regId != null) {
+				params[0].setRegId(regId);
+			}
 			WysApi wysApi = new WysApi();
 			int result = wysApi.DoSignUp(params[0]);
 
@@ -65,18 +86,10 @@ public class SignupTask extends BaseAsyncTaskManager {
 
 			progressDialog = new ProgressDialog(_ctx);
 			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			// Set the dialog title to 'Loading...'
 			progressDialog.setTitle("Please wait..");
 			progressDialog.setMessage("while we sign you up");
-			// Set the dialog message to 'Loading application View, please
-			// wait...'
-			// progressDialog.setMessage("Loading application View, please wait...");
-			// This dialog can't be canceled by pressing the back key
 			progressDialog.setCancelable(false);
-			// This dialog isn't indeterminate
 			progressDialog.setIndeterminate(false);
-
-			// Display the progress dialog
 			progressDialog.show();
 		}
 
@@ -84,7 +97,7 @@ public class SignupTask extends BaseAsyncTaskManager {
 		protected void onPostExecute(Integer result) {
 
 			progressDialog.dismiss();
-			
+
 			if (result == SUCCESS) {
 				Toast.makeText(
 						_ctx,
@@ -107,21 +120,25 @@ public class SignupTask extends BaseAsyncTaskManager {
 
 	}
 
-	public static int CheckUserAvail(String username) {
-		ArrayList<BaseBusiness> users = new WysApi().GetUserByUsername(username);
+/*	public static int CheckUserAvail(String username) {
+		ArrayList<BaseBusiness> users = new WysApi()
+				.GetUserByUsername(username);
 		int result = users.get(0).getStatus();
 		return result;
-	}
+	}*/
 
 	private class CheckUserAsync extends AsyncTask<String, Void, Integer> {
 
 		@Override
 		protected Integer doInBackground(String... params) {
-			int result = -1;
+			int result = 1;
 			List<BaseBusiness> users = new WysApi()
 					.GetUserByUsername(params[0]);
 			if (users != null) {
 				result = users.get(0).getStatus();
+				return result;
+			}else if(users == null) {
+				result = SERVER_ERROR;
 			}
 			return result;
 		}
@@ -137,8 +154,9 @@ public class SignupTask extends BaseAsyncTaskManager {
 				if (_oncheCheckUserListener != null)
 					_oncheCheckUserListener.onUserNotAvail();
 
-			} else {
-
+			} else if(result == SERVER_ERROR) {
+                 Toast.makeText(_ctx, "OOPS!! SERVER NOT RESPONDING",  Toast.LENGTH_LONG).show();
+                 
 			}
 
 			super.onPostExecute(result);

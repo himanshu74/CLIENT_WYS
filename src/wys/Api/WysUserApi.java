@@ -25,11 +25,10 @@ public class WysUserApi {
 	private static final int ERROR = 1;
 
 	private static final String HOST = "http://";
-	private static final String DOMAIN = "192.168.0.5/WYS/api/";
+	//private static final String DOMAIN = "192.168.0.5/WYS/api/";
 	// private static final String DOMAIN = "129.107.144.192/WYS/api/";
 	// private static final String DOMAIN = "10.226.50.83/WYS/api/";
-	// private static final String DOMAIN =
-	// "jangra.com.s10.dotnetpark.com/api/";
+	 private static final String DOMAIN = "jangra.com.s10.dotnetpark.com/api/";
 
 	private IHttpApi mHttpApi;
 
